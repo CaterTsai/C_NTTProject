@@ -1,0 +1,5 @@
+ofxAnimatable
+ofxGui
+ofxOsc
+ofxTrueTypeFontUC
+ofxXmlSettings
