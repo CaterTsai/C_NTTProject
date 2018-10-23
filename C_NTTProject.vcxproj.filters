@@ -97,6 +97,9 @@
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp">
       <Filter>addons\ofxXmlSettings\libs</Filter>
     </ClCompile>
+    <ClCompile Include="src\text2Model.cpp">
+      <Filter>src\text2model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -156,7 +159,7 @@
     <Filter Include="addons\ofxXmlSettings\libs">
       <UniqueIdentifier>{687714A8-1662-FA1C-261F-50F0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\NewFilter1">
+    <Filter Include="src\text2model">
       <UniqueIdentifier>{ca3bfe64-be85-496b-9510-d8b7ac85f7fb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -277,6 +280,9 @@
     </ClInclude>
     <ClInclude Include="src\constParameter.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\text2Model.h">
+      <Filter>src\text2model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
