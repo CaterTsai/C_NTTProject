@@ -6,13 +6,19 @@
 class text2Model
 {
 public:
-	void load(string path);
-	void translate(string text);
+	void load(string path, string ucPath);
+	vector<ofVboMesh> translate(wstring text, float depth);
+	vector<ofVboMesh> translate(string text, float depth);
+
+private:
+
+	string ws2s(wstring wstr);
+	wstring s2ws(const string & str);
 
 private:
 	bool _isLoad;
-	ofFbo _canvas;
-	ofxTrueTypeFontUC	_font;
+	ofxTrueTypeFontUC	_fontUC;
+	ofTrueTypeFont _font;
 //-------------------
 //Singleton
 //-------------------
