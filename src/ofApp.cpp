@@ -1,13 +1,13 @@
 #include "ofApp.h"
-
+#include "text2Model.h"
 //--------------------------------------------------------------
 void ofApp::setup(){
 
 
 	text2Model::getInstance()->load("font.ttf", "fontUC.ttc");
-
-	_textMeshList = text2Model::getInstance()->translate(L"ด๚ธี", 10.0f);
+	_word.setup(L"ค@คf");
 	ofBackground(0);
+	_cam.setVFlip(true);
 }
 
 //--------------------------------------------------------------
@@ -17,14 +17,9 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+
 	_cam.begin();
-	ofPushMatrix();
-	for (auto iter : _textMeshList)
-	{
-		iter.draw();
-	}
-	
-	ofPopMatrix();
+	_word.draw(0, 0);
 	_cam.end();
 }
 

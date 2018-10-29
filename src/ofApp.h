@@ -1,7 +1,7 @@
 #pragma once
 
 #include "constParameter.h"
-#include "text2Model.h"
+#include "wordUnit.h"
 
 
 class ofApp : public ofBaseApp{
@@ -15,6 +15,6 @@ public:
 
 private:
 	ofEasyCam _cam;
-	vector<ofVboMesh> _textMeshList;
 
+	wordUnit _word;
 };

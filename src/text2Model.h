@@ -7,7 +7,7 @@ class text2Model
 {
 public:
 	void load(string path, string ucPath);
-	vector<ofVboMesh> translate(wstring text, float depth);
+	void translate(wstring text, float depth, vector<ofVboMesh>& meshList, vector<int>& groupList);
 	vector<ofVboMesh> translate(string text, float depth);
 
 private:

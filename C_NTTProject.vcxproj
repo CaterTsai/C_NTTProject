@@ -204,6 +204,8 @@
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlerror.cpp" />
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp" />
     <ClCompile Include="src\text2Model.cpp" />
+    <ClCompile Include="src\textUnit.cpp" />
+    <ClCompile Include="src\wordUnit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\constParameter.h" />
@@ -246,6 +248,8 @@
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.h" />
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.h" />
     <ClInclude Include="src\text2Model.h" />
+    <ClInclude Include="src\textUnit.h" />
+    <ClInclude Include="src\wordUnit.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(OF_ROOT)\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">
