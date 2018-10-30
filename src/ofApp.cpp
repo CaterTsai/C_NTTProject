@@ -5,25 +5,65 @@ void ofApp::setup(){
 
 
 	text2Model::getInstance()->load("font.ttf", "fontUC.ttc");
-	_word.setup(L"一口");
+	addWords();
 	ofBackground(0);
-	_cam.setVFlip(true);
+
+	_timer = ofGetElapsedTimef();
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+	float delta = ofGetElapsedTimef() - _timer;
+	_timer += delta;
 
+	for (int i = 0; i < 10; i++)
+	{
+		_wordList[i].update(delta);
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	_cam.begin();
-	_word.draw(0, 0);
-	_cam.end();
+	for (int i = 0; i < 10; i++)
+	{
+		_wordList[i].draw(_wordPos[i].x, _wordPos[i].y, 0);
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::addWords()
+{
+	_wordList.resize(10);
+	_wordList[0].setup(L"豪宅");
+	_wordList[1].setup(L"百貨");
+	_wordList[2].setup(L"巴士站");
+	_wordList[3].setup(L"捷運");
+	_wordList[4].setup(L"人群");
+	_wordList[5].setup(L"吳寶春");
+	_wordList[6].setup(L"耳朵石");
+	_wordList[7].setup(L"這裡");
+	_wordList[8].setup(L"以前");
+	_wordList[9].setup(L"都沒有");
+
+	float unitW = ofGetWindowWidth() / 11.0f;
+	float x = unitW;
+	_wordPos.resize(10);
+
+	float noiseV = ofRandom(1.0);
+	float delta = 0.01;
+	for (int i = 0; i < 10; i++)
+	{
+		int y = ofGetWindowHeight() / 2.0f;
+		y += (0.5 - ofNoise(i, noiseV)) * 400;
+		_wordPos[i].set(x, y);
+		x += unitW;
+		noiseV += delta;
+	}
 
 }

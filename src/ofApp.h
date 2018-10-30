@@ -14,7 +14,15 @@ public:
 	void keyPressed(int key);
 
 private:
+	float _timer;
 	ofEasyCam _cam;
 
-	wordUnit _word;
+	
+
+public:
+	void addWords();
+
+private:
+	vector<ofVec3f> _wordPos;
+	vector<wordUnit> _wordList;
 };

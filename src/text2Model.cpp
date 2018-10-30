@@ -4,14 +4,14 @@
 void text2Model::load(string path, string ucPath)
 {
 	_font.setGlobalDpi(72);
-	if (!_font.load(path, cTextCanvasSize, true, true, true))
+	if (!_font.load(path, cTextFontSize, true, true, true))
 	{
 		ofLog(OF_LOG_ERROR, "[text2Model::load]Cant load font");
 		return;
 	}
 
 	_fontUC.setGlobalDpi(72);
-	if (!_fontUC.load(ucPath, cTextCanvasSize, true, true))
+	if (!_fontUC.load(ucPath, cTextFontSize, true, true))
 	{
 		ofLog(OF_LOG_ERROR, "[text2Model::load]Cant load fontUC");
 		return;

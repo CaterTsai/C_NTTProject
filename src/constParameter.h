@@ -2,4 +2,4 @@
 
 #include "ofMain.h"
 
-static const int cTextCanvasSize = 32;
+static const int cTextFontSize = 50;
