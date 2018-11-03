@@ -1,7 +1,8 @@
 #pragma once
 
 #include "textUnit.h"
-
+#include "ofxAnimatableOfPoint.h"
+#include "ofxAnimatableFloat.h"
 class wordUnit
 {
 #pragma region pUnit
@@ -10,15 +11,39 @@ private:
 	{
 	public:
 		pUnit();
-		pUnit(float r);
+		pUnit(float r, ofVec3f pos);
 		void update(float delta);
-		
 		ofVec3f getPos();
-	public:
+		
+		ofVec3f getRotateAxis();
+		float getRotate();
+
+		void toggle();
+
+	private:
+		enum eAnimState
+		{
+			eRotateMode = 0,
+			eRotateToStay,
+			eStayMode,
+			eStayToRotate
+		}_eState;
+
+		//Rotate Mode
 		float _theta, _sigma, _vT, _vS;
 		float _r;
 		ofVec3f _axis;
 		float _rD, _vR;
+
+		//Stay Mode
+		ofVec3f _stayPos;
+
+	private:
+		ofVec3f getRotatePos();
+		//Animation
+		ofxAnimatableOfPoint	_animPos;
+		ofxAnimatableFloat _animRotate;
+
 	};
 #pragma endregion
 
@@ -32,9 +57,12 @@ public:
 	void update(float delta);
 	void draw(int x, int y, int z = 0);
 
+	int getTextNum();
+	void toggleText(int idx);
+
 private:
 	bool _isSetup;
 	ofIcoSpherePrimitive _sphere;
 	vector<textUnit> _textMgr;
-	vector<pUnit> _movePoint;
+	vector<vector<pUnit>> _movePoint;
 };

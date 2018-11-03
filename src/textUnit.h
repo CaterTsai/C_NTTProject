@@ -11,6 +11,7 @@ public:
 	void drawPart(int pIdx);
 	void drawFace();
 	int getPartNum();
+	ofVec3f getPos(int pIdx);
 private:
 	ofVec3f rebuild(ofVboMesh& mesh);
 

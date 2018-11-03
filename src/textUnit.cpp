@@ -40,6 +40,16 @@ int textUnit::getPartNum()
 }
 
 //-------------------------------
+ofVec3f textUnit::getPos(int pIdx)
+{
+	if (pIdx >= _tempPos.size())
+	{
+		return ofVec3f(0);
+	}
+	return _tempPos[pIdx];
+}
+
+//-------------------------------
 ofVec3f textUnit::rebuild(ofVboMesh & mesh)
 {
 	auto allVector = mesh.getVertices();

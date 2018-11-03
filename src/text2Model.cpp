@@ -28,6 +28,8 @@ void text2Model::translate(wstring text, float depth, vector<ofVboMesh>& meshLis
 	groupList.clear();
 	string word = ws2s(text);
 
+	auto bounding = _fontUC.getStringBoundingBox(word, 0, 0);
+	ofVec3f center((bounding.width) * 0.5f + bounding.x, bounding.y * 0.5, 0);
 	vector <ofPath> word_paths = _fontUC.getStringAsPoints(word, 0);
 	int index = 0;
 	for (int i = 0; i < word_paths.size(); i++) {
@@ -45,10 +47,10 @@ void text2Model::translate(wstring text, float depth, vector<ofVboMesh>& meshLis
 			for (int p = 0; p < char_polylines[c].size(); p++) {
 
 				if (p == 0) {
-					front_path.moveTo(char_polylines[c][p]);
+					front_path.moveTo(char_polylines[c][p] - center);
 				}
 				else {
-					front_path.lineTo(char_polylines[c][p]);
+					front_path.lineTo(char_polylines[c][p] - center);
 				}
 			}
 		}
@@ -74,8 +76,8 @@ void text2Model::translate(wstring text, float depth, vector<ofVboMesh>& meshLis
 			int k = 0;
 
 			for (k = 0; k < points.size() - 1; k++) {
-				ofPoint p1 = points.at(k + 0);
-				ofPoint p2 = points.at(k + 1);
+				ofPoint p1 = points.at(k + 0) - center;
+				ofPoint p2 = points.at(k + 1) - center;
 
 				side.addVertex(p1);
 				side.addVertex(p2);
@@ -85,8 +87,8 @@ void text2Model::translate(wstring text, float depth, vector<ofVboMesh>& meshLis
 			}
 
 			// connect the last to the first
-			ofPoint p1 = points.at(k);
-			ofPoint p2 = points.at(0);
+			ofPoint p1 = points.at(k) - center;
+			ofPoint p2 = points.at(0) - center;
 			side.addVertex(p1);
 			side.addVertex(p2);
 			side.addVertex(ofPoint(p1.x, p1.y, p1.z + depth));

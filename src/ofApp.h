@@ -23,6 +23,7 @@ public:
 	void addWords();
 
 private:
+	wordUnit _wordUnit;
 	vector<ofVec3f> _wordPos;
 	vector<wordUnit> _wordList;
 };

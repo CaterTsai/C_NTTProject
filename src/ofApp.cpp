@@ -3,9 +3,9 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-
 	text2Model::getInstance()->load("font.ttf", "fontUC.ttc");
-	addWords();
+	//addWords();
+	_wordUnit.setup(L"ª÷¿ú°\");
 	ofBackground(0);
 
 	_timer = ofGetElapsedTimef();
@@ -16,24 +16,44 @@ void ofApp::update(){
 	float delta = ofGetElapsedTimef() - _timer;
 	_timer += delta;
 
-	for (int i = 0; i < 10; i++)
-	{
-		_wordList[i].update(delta);
-	}
+	//for (int i = 0; i < cTextDisplaySize; i++)
+	//{
+	//	_wordList[i].update(delta);
+	//}
+	_wordUnit.update(delta);
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	for (int i = 0; i < 10; i++)
-	{
-		_wordList[i].draw(_wordPos[i].x, _wordPos[i].y, 0);
-	}
+	//for (int i = 0; i < cTextDisplaySize; i++)
+	//{
+	//	_wordList[i].draw(_wordPos[i].x, _wordPos[i].y, 0);
+	//}
+	_wordUnit.draw(ofGetWindowWidth() * 0.5f, ofGetWindowHeight() * 0.5f);
+	ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 0, 100);
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+	switch (key)
+	{
+	case 'q':
+	{
+		_wordUnit.toggleText(0);
+		break;
+	}
+	case 'w': 
+	{
+		_wordUnit.toggleText(1);
+		break;
+	}
+	case 'e':
+	{
+		_wordUnit.toggleText(2);
+		break;
+	}
+	}
 }
 
 //--------------------------------------------------------------
