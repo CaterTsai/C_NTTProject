@@ -106,6 +106,42 @@
     <ClCompile Include="src\textUnit.cpp">
       <Filter>src\wordUnit</Filter>
     </ClCompile>
+    <ClCompile Include="src\urg_library-1.2.3\src\ticks.cpp">
+      <Filter>src\urgMgr\urg\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\urg_library-1.2.3\src\urg_connection.c">
+      <Filter>src\urgMgr\urg\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\urg_library-1.2.3\src\urg_debug.c">
+      <Filter>src\urgMgr\urg\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\urg_library-1.2.3\src\Urg_driver.cpp">
+      <Filter>src\urgMgr\urg\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\urg_library-1.2.3\src\urg_ring_buffer.c">
+      <Filter>src\urgMgr\urg\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\urg_library-1.2.3\src\urg_sensor.c">
+      <Filter>src\urgMgr\urg\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\urg_library-1.2.3\src\urg_serial.c">
+      <Filter>src\urgMgr\urg\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\urg_library-1.2.3\src\urg_serial_utils.c">
+      <Filter>src\urgMgr\urg\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\urg_library-1.2.3\src\urg_tcpclient.c">
+      <Filter>src\urgMgr\urg\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\urg_library-1.2.3\src\urg_utils.c">
+      <Filter>src\urgMgr\urg\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\urgMgr.cpp">
+      <Filter>src\urgMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="src\urgWrapper.cpp">
+      <Filter>src\urgMgr\urg</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -170,6 +206,15 @@
     </Filter>
     <Filter Include="src\wordUnit">
       <UniqueIdentifier>{1b9e453b-fae3-4bf6-b021-c89f2087de33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\urgMgr">
+      <UniqueIdentifier>{eed4b3c9-4d1a-4514-823d-12717fca53d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\urgMgr\urg">
+      <UniqueIdentifier>{2b02e6f6-ad4a-417e-af18-e6e1a781855a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\urgMgr\urg\src">
+      <UniqueIdentifier>{51bba452-5e86-4809-a139-887779e4a135}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -298,6 +343,12 @@
     </ClInclude>
     <ClInclude Include="src\textUnit.h">
       <Filter>src\wordUnit</Filter>
+    </ClInclude>
+    <ClInclude Include="src\urgMgr.h">
+      <Filter>src\urgMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="src\urgWrapper.h">
+      <Filter>src\urgMgr\urg</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

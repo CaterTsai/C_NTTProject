@@ -1,13 +1,17 @@
 #include "ofApp.h"
 #include "text2Model.h"
+#include "urgWrapper.h"
+
 //--------------------------------------------------------------
 void ofApp::setup(){
 
 	text2Model::getInstance()->load("font.ttf", "fontUC.ttc");
-	//addWords();
-	_wordUnit.setup(L"ª÷¿ú°\");
-	ofBackground(0);
+	addWords();
 
+	_urgMgr.setup("192.168.0.10", 10940, 0.2f);
+	_urgMgr.addTriggerArea("T1", 0, 200, 100, 100);
+	
+	ofBackground(0);
 	_timer = ofGetElapsedTimef();
 }
 
@@ -16,21 +20,24 @@ void ofApp::update(){
 	float delta = ofGetElapsedTimef() - _timer;
 	_timer += delta;
 
-	//for (int i = 0; i < cTextDisplaySize; i++)
-	//{
-	//	_wordList[i].update(delta);
-	//}
-	_wordUnit.update(delta);
+	for (int i = 0; i < cTextDisplaySize; i++)
+	{
+		_wordList[i].update(delta);
+	}
+	
+	_urgMgr.update(delta);
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	//for (int i = 0; i < cTextDisplaySize; i++)
-	//{
-	//	_wordList[i].draw(_wordPos[i].x, _wordPos[i].y, 0);
-	//}
-	_wordUnit.draw(ofGetWindowWidth() * 0.5f, ofGetWindowHeight() * 0.5f);
+	for (int i = 0; i < cTextDisplaySize; i++)
+	{
+		_wordList[i].draw(_wordPos[i].x, _wordPos[i].y, 0);
+	}
+	
+
+	_urgMgr.draw(ofGetWindowWidth() * 0.5f, ofGetWindowHeight() * 0.5f);
 	ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 0, 100);
 }
 
@@ -40,17 +47,23 @@ void ofApp::keyPressed(int key){
 	{
 	case 'q':
 	{
-		_wordUnit.toggleText(0);
+		for (int i = 0; i < cTextDisplaySize; i++)
+		{
+			for (int j = 0; j < _wordList[i].getTextNum(); j++)
+			{
+				_wordList[i].toggleText(j);
+			}
+		}
 		break;
 	}
-	case 'w': 
+	case 'a':
 	{
-		_wordUnit.toggleText(1);
+		_urgMgr.start();
 		break;
 	}
-	case 'e':
+	case 's':
 	{
-		_wordUnit.toggleText(2);
+		_urgMgr.stop();
 		break;
 	}
 	}
