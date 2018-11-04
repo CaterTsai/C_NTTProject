@@ -8,8 +8,8 @@ void ofApp::setup(){
 	text2Model::getInstance()->load("font.ttf", "fontUC.ttc");
 	addWords();
 
-	_urgMgr.setup("192.168.0.10", 10940, 0.2f);
-	_urgMgr.addTriggerArea("T1", 0, 200, 100, 100);
+	initUrgMgr();
+	
 	
 	ofBackground(0);
 	_timer = ofGetElapsedTimef();
@@ -99,4 +99,32 @@ void ofApp::addWords()
 		noiseV += delta;
 	}
 
+}
+
+//--------------------------------------------------------------
+void ofApp::initUrgMgr()
+{
+	_urgMgr.setup("192.168.0.10", 10940, 0.2f);
+	addTriggerAreas();
+
+	ofAddListener(urgMgr::triggerArea::_onTriggerOn, this, &ofApp::onTriggerOn);
+	ofAddListener(urgMgr::triggerArea::_onTriggerOff, this, &ofApp::onTriggerOff);
+}
+
+//--------------------------------------------------------------
+void ofApp::addTriggerAreas()
+{
+	_urgMgr.addTriggerArea("T1", 0, 200, 100, 100);
+}
+
+//--------------------------------------------------------------
+void ofApp::onTriggerOn(string & id)
+{
+	cout << "ON :" << id << endl;
+}
+
+//--------------------------------------------------------------
+void ofApp::onTriggerOff(string & id)
+{
+	cout << "OFF :" << id << endl;
 }

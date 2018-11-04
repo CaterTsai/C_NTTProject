@@ -25,6 +25,11 @@ private:
 	vector<wordUnit> _wordList;
 
 #pragma region urgMgr
+public:
+	void initUrgMgr();
+	void addTriggerAreas();
+	void onTriggerOn(string& id);
+	void onTriggerOff(string& id);
 private:
 	urgMgr _urgMgr;
 #pragma endregion

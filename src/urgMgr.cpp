@@ -3,6 +3,8 @@
 #include "urgMgr.h"
 
 #pragma region Trigger Area
+ofEvent<string> urgMgr::triggerArea::_onTriggerOn = ofEvent<string>();
+ofEvent<string> urgMgr::triggerArea::_onTriggerOff = ofEvent<string>();
 //-----------------------------
 urgMgr::triggerArea::triggerArea()
 	:_id("")
@@ -49,8 +51,29 @@ void urgMgr::triggerArea::check(ofVec2f pos)
 }
 
 //-----------------------------
+void urgMgr::triggerArea::finish()
+{
+	if (_isTrigger)
+	{
+		if (_isTrigger != _triggerTmp)
+		{
+			ofNotifyEvent(urgMgr::triggerArea::_onTriggerOn, _id);
+		}
+	}
+	else
+	{
+		if (_isTrigger != _triggerTmp)
+		{
+			ofNotifyEvent(urgMgr::triggerArea::_onTriggerOff, _id);
+		}
+	}
+	_triggerTmp = _isTrigger;
+}
+
+//-----------------------------
 void urgMgr::triggerArea::clear()
 {
+	
 	_isTrigger = false;
 	_checkCounter = false;
 }
@@ -109,7 +132,7 @@ void urgMgr::draw(int x, int y)
 	ofTranslate(x, y);
 	{
 		urgWrapper::getInstance()->draw(_mm2pix);
-		//drawArea();		
+		drawArea();		
 	}
 	ofPopMatrix();
 }
@@ -171,6 +194,11 @@ void urgMgr::checkTrigger()
 		{
 			iter.check(pos);
 		}
+	}
+
+	for (auto& iter : _triggerAreaList)
+	{
+		iter.finish();
 	}
 }
 

@@ -5,7 +5,7 @@
 class urgMgr
 {
 #pragma region Trigger Area
-private:
+public:
 	class triggerArea
 	{
 	public:
@@ -14,13 +14,20 @@ private:
 
 		void draw(float ratio);
 		void check(ofVec2f pos);
+		void finish();
 		void clear();
 
 	private:
-		bool _isTrigger;
+		bool _isTrigger, _triggerTmp;
 		ofRectangle _rect;
 		string _id;
 		int _checkCounter;
+
+	public:
+		//Global Event
+		static ofEvent<string> _onTriggerOn;
+		static ofEvent<string> _onTriggerOff;
+
 	};
 #pragma endregion
 
