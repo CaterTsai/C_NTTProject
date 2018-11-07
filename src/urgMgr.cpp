@@ -9,12 +9,14 @@ ofEvent<string> urgMgr::triggerArea::_onTriggerOff = ofEvent<string>();
 urgMgr::triggerArea::triggerArea()
 	:_id("")
 	, _isTrigger(false)
+	, _triggerTmp(false)
 {}
 
 //-----------------------------
 urgMgr::triggerArea::triggerArea(ofRectangle area, string id)
 	: _id(id)
 	, _isTrigger(false)
+	, _triggerTmp(false)
 {
 	_rect = area;
 }
@@ -161,7 +163,7 @@ void urgMgr::stop()
 void urgMgr::addTriggerArea(string id, int x, int y, int width, int height)
 {
 	ofRectangle rect;
-	rect.setFromCenter(-x, y, width, height);
+	rect.setFromCenter(x, y, width, height);
 	triggerArea newArea(rect, id);
 	_triggerAreaList.push_back(newArea);
 }

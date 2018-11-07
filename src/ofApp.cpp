@@ -9,7 +9,7 @@ void ofApp::setup(){
 	addWords();
 
 	initUrgMgr();
-	
+	initMaxSender();
 	
 	ofBackground(0);
 	_timer = ofGetElapsedTimef();
@@ -20,24 +20,26 @@ void ofApp::update(){
 	float delta = ofGetElapsedTimef() - _timer;
 	_timer += delta;
 
-	for (int i = 0; i < cTextDisplaySize; i++)
+	for (int i = 0; i < cTriggerGroupNum; i++)
 	{
 		_wordList[i].update(delta);
 	}
 	
 	_urgMgr.update(delta);
+
+	//DEBUG
+	triggerTestUpdate(delta);
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
-	for (int i = 0; i < cTextDisplaySize; i++)
+	_urgMgr.draw(ofGetWindowWidth() * 0.5f, 0);
+	for (int i = 0; i < cTriggerGroupNum; i++)
 	{
 		_wordList[i].draw(_wordPos[i].x, _wordPos[i].y, 0);
 	}
-	
 
-	_urgMgr.draw(ofGetWindowWidth() * 0.5f, ofGetWindowHeight() * 0.5f);
+	triggerTestDraw();
 	ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 0, 100);
 }
 
@@ -47,7 +49,7 @@ void ofApp::keyPressed(int key){
 	{
 	case 'q':
 	{
-		for (int i = 0; i < cTextDisplaySize; i++)
+		for (int i = 0; i < cTriggerGroupNum; i++)
 		{
 			for (int j = 0; j < _wordList[i].getTextNum(); j++)
 			{
@@ -56,8 +58,13 @@ void ofApp::keyPressed(int key){
 		}
 		break;
 	}
-	case 'a':
+	case 'w':
 	{
+		triggerTestStart();
+		break;
+	}
+	case 'a':
+	{	
 		_urgMgr.start();
 		break;
 	}
@@ -102,6 +109,53 @@ void ofApp::addWords()
 }
 
 //--------------------------------------------------------------
+void ofApp::triggerWord(int group, int id)
+{
+	if (group < 0 || group >= _wordList.size())
+	{
+		return;
+	}
+
+	switch (_wordList[group].getTextNum())
+	{
+	case 2:
+	{
+		if (id == 0)
+		{
+			_wordList[group].toggleText(0);
+		}
+		else if(id == 2)
+		{
+			_wordList[group].toggleText(1);
+		}
+		break;
+	}
+	case 3:
+	{
+		if (id != 3)
+		{
+			_wordList[group].toggleText(id);
+		}
+		break;
+	}
+	}
+}
+
+#pragma region Max Sender
+//--------------------------------------------------------------
+void ofApp::initMaxSender()
+{
+	_maxSenderList.resize(cTriggerNum);
+	string ip = "127.0.0.1";
+	int port = 7400;
+	for (int i = 0; i < cTriggerNum; i++)
+	{
+		_maxSenderList[i].init(ip, port + i);
+	}
+}
+#pragma endregion
+
+//--------------------------------------------------------------
 void ofApp::initUrgMgr()
 {
 	_urgMgr.setup("192.168.0.10", 10940, 0.2f);
@@ -114,17 +168,83 @@ void ofApp::initUrgMgr()
 //--------------------------------------------------------------
 void ofApp::addTriggerAreas()
 {
-	_urgMgr.addTriggerArea("T1", 0, 200, 100, 100);
+	float unitW = 50;
+	float unitH = 200;
+	float x = unitW * cTriggerNum * -0.5 + (0.5f * unitW);
+	for (int i = 0; i < cTriggerNum; i++)
+	{
+		_urgMgr.addTriggerArea(ofToString(i), x, 200, unitW, unitH);
+		x += unitW;
+	}
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::onTriggerOn(string & id)
 {
-	cout << "ON :" << id << endl;
+	auto val = ofToInt(id);
+	int group = floor(val / (float)cTriggerEachGroup);
+	int index = val % cTriggerEachGroup;
+
+	triggerWord(group, index);
 }
 
 //--------------------------------------------------------------
 void ofApp::onTriggerOff(string & id)
 {
-	cout << "OFF :" << id << endl;
+	auto val = ofToInt(id);
+	int group = floor(val / (float)cTriggerEachGroup);
+	int index = val % cTriggerEachGroup;
+
+	triggerWord(group, index);
 }
+
+#pragma region DEBUG
+//--------------------------------------------------------------
+void ofApp::triggerTestStart()
+{
+	_testStart = true;
+	_testIdx = 0;
+	_testTimer = cTriggerTestT;
+
+	
+}
+
+//--------------------------------------------------------------
+void ofApp::triggerTestUpdate(float delta)
+{
+	if (!_testStart)
+	{
+		return;
+	}
+
+	_testTimer -= delta;
+	if (_testTimer <= 0.0f)
+	{
+		int offId = (_testIdx - 1) < 0 ? cTriggerNum - 1 : (_testIdx - 1);
+		_maxSenderList[offId].setOff();
+		int group = floor(_testIdx / (float)cTriggerEachGroup);
+		int index = _testIdx % cTriggerEachGroup;
+		triggerWord(group, index);
+
+		_maxSenderList[_testIdx].setOn();
+
+		_testIdx = (_testIdx + 1) % cTriggerNum;
+		
+		_testTimer = cTriggerTestT;
+	}
+}
+
+//--------------------------------------------------------------
+void ofApp::triggerTestDraw()
+{
+	if (!_testStart)
+	{
+		return;
+	}
+
+	ofDrawBitmapStringHighlight("Test Index :" + ofToString(_testIdx), 0, 50);
+}
+#pragma endregion
+
+

@@ -142,6 +142,9 @@
     <ClCompile Include="src\urgWrapper.cpp">
       <Filter>src\urgMgr\urg</Filter>
     </ClCompile>
+    <ClCompile Include="src\maxSender.cpp">
+      <Filter>src\maxSender</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -215,6 +218,9 @@
     </Filter>
     <Filter Include="src\urgMgr\urg\src">
       <UniqueIdentifier>{51bba452-5e86-4809-a139-887779e4a135}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\maxSender">
+      <UniqueIdentifier>{33d73e2c-e183-4af1-8841-63604e1649ad}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -349,6 +355,9 @@
     </ClInclude>
     <ClInclude Include="src\urgWrapper.h">
       <Filter>src\urgMgr\urg</Filter>
+    </ClInclude>
+    <ClInclude Include="src\maxSender.h">
+      <Filter>src\maxSender</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

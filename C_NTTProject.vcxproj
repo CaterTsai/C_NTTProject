@@ -172,6 +172,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\maxSender.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
     <ClCompile Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatable.cpp" />
     <ClCompile Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableFloat.cpp" />
@@ -221,6 +222,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\constParameter.h" />
+    <ClInclude Include="src\maxSender.h" />
     <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatable.h" />
     <ClInclude Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableFloat.h" />
