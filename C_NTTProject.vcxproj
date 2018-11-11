@@ -95,7 +95,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\addons\ofxAnimatable\src;..\..\..\addons\ofxGui\src;..\..\..\addons\ofxOsc\libs;..\..\..\addons\ofxOsc\libs\oscpack;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxTrueTypeFontUC\src;..\..\..\addons\ofxXmlSettings\libs;..\..\..\addons\ofxXmlSettings\src;\src\urg_library-1.2.3\src;.\src\urg_library-1.2.3\include\cpp;.\src\urg_library-1.2.3\include\c</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\addons\ofxAnimatable\src;..\..\..\addons\ofxGui\src;..\..\..\addons\ofxOsc\libs;..\..\..\addons\ofxOsc\libs\oscpack;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxTrueTypeFontUC\src;..\..\..\addons\ofxXmlSettings\libs;..\..\..\addons\ofxXmlSettings\src;\src\urg_library-1.2.3\src;.\src\urg_library-1.2.3\include\cpp;.\src\urg_library-1.2.3\include\c;..\..\..\addons\ofxPostProcessing\src</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
@@ -133,7 +133,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\addons\ofxAnimatable\src;..\..\..\addons\ofxGui\src;..\..\..\addons\ofxOsc\libs;..\..\..\addons\ofxOsc\libs\oscpack;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxTrueTypeFontUC\src;..\..\..\addons\ofxXmlSettings\libs;..\..\..\addons\ofxXmlSettings\src;\src\urg_library-1.2.3\src;.\src\urg_library-1.2.3\include\cpp;.\src\urg_library-1.2.3\include\c</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\addons\ofxAnimatable\src;..\..\..\addons\ofxGui\src;..\..\..\addons\ofxOsc\libs;..\..\..\addons\ofxOsc\libs\oscpack;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxTrueTypeFontUC\src;..\..\..\addons\ofxXmlSettings\libs;..\..\..\addons\ofxXmlSettings\src;\src\urg_library-1.2.3\src;.\src\urg_library-1.2.3\include\cpp;.\src\urg_library-1.2.3\include\c;..\..\..\addons\ofxPostProcessing\src</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -171,6 +171,32 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\BleachBypassPass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\BloomPass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\ContrastPass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\ConvolutionPass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\DofAltPass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\DofPass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\EdgePass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\FakeSSSPass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\FxaaPass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\GodRaysPass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\HorizontalTiltShifPass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\HsbShiftPass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\KaleidoscopePass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\LimbDarkeningPass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\LUTPass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\NoiseWarpPass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\PixelatePass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\PostProcessing.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\RenderPass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\RGBShiftPass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\RimHighlightingPass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\SSAOPass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\ToonPass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\VerticalTiltShifPass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\ZoomBlurPass.cpp" />
+    <ClCompile Include="src\bloomFilter.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\maxSender.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
@@ -205,7 +231,8 @@
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlerror.cpp" />
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp" />
     <ClCompile Include="src\text2Model.cpp" />
-    <ClCompile Include="src\textUnit.cpp" />
+    <ClCompile Include="src\text.cpp" />
+    <ClCompile Include="src\textAnim.cpp" />
     <ClCompile Include="src\urgMgr.cpp" />
     <ClCompile Include="src\urgWrapper.cpp" />
     <ClCompile Include="src\urg_library-1.2.3\src\ticks.cpp" />
@@ -221,6 +248,33 @@
     <ClCompile Include="src\wordUnit.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\BleachBypassPass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\BloomPass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\ContrastPass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\ConvolutionPass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\DofAltPass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\DofPass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\EdgePass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\FakeSSSPass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\FxaaPass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\GodRaysPass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\HorizontalTiltShifPass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\HsbShiftPass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\KaleidoscopePass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\LimbDarkeningPass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\LUTPass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\NoiseWarpPass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\ofxPostProcessing.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\PixelatePass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\PostProcessing.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\RenderPass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\RGBShiftPass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\RimHighlightingPass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\SSAOPass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\ToonPass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\VerticalTiltShifPass.h" />
+    <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\ZoomBlurPass.h" />
+    <ClInclude Include="src\bloomFilter.h" />
     <ClInclude Include="src\constParameter.h" />
     <ClInclude Include="src\maxSender.h" />
     <ClInclude Include="src\ofApp.h" />
@@ -262,7 +316,8 @@
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.h" />
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.h" />
     <ClInclude Include="src\text2Model.h" />
-    <ClInclude Include="src\textUnit.h" />
+    <ClInclude Include="src\text.h" />
+    <ClInclude Include="src\textAnim.h" />
     <ClInclude Include="src\urgMgr.h" />
     <ClInclude Include="src\urgWrapper.h" />
     <ClInclude Include="src\wordUnit.h" />

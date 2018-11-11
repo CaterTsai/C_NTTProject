@@ -1,7 +1,7 @@
-#include "textUnit.h"
+#include "text.h"
 
 //-------------------------------
-void textUnit::init(vector<ofVboMesh>& meshList)
+void text::init(vector<ofVboMesh>& meshList)
 {
 	if (meshList.size() <= 0)
 	{
@@ -18,29 +18,33 @@ void textUnit::init(vector<ofVboMesh>& meshList)
 }
 
 //-------------------------------
-void textUnit::drawPart(int pIdx)
+void text::drawPart(int pIdx)
 {
 	if (pIdx >= _part.size())
 	{
 		return;
 	}
+
+	
 	_part[pIdx].drawWireframe();
+	
+
 }
 
 //-------------------------------
-void textUnit::drawFace()
+void text::drawFace()
 {
 	_face.draw();
 }
 
 //-------------------------------
-int textUnit::getPartNum()
+int text::getPartNum()
 {
 	return _part.size();
 }
 
 //-------------------------------
-ofVec3f textUnit::getPos(int pIdx)
+ofVec3f text::getPos(int pIdx)
 {
 	if (pIdx >= _tempPos.size())
 	{
@@ -50,7 +54,7 @@ ofVec3f textUnit::getPos(int pIdx)
 }
 
 //-------------------------------
-ofVec3f textUnit::rebuild(ofVboMesh & mesh)
+ofVec3f text::rebuild(ofVboMesh & mesh)
 {
 	auto allVector = mesh.getVertices();
 	ofVec3f center(0);

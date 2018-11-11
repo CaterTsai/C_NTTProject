@@ -1,12 +1,12 @@
 #pragma once
 
 #include "constParameter.h"
+#include "bloomFilter.h"
 
-
-class textUnit
+class text
 {
 public:
-	textUnit():_isInit(false){};
+	text():_isInit(false){};
 	void init(vector<ofVboMesh>& meshList);
 	void drawPart(int pIdx);
 	void drawFace();

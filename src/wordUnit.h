@@ -1,68 +1,38 @@
 #pragma once
 
-#include "textUnit.h"
-#include "ofxAnimatableOfPoint.h"
-#include "ofxAnimatableFloat.h"
+#include "text.h"
+#include "textAnim.h"
+
 class wordUnit
 {
-#pragma region pUnit
-private:
-	class pUnit
-	{
-	public:
-		pUnit();
-		pUnit(float r, ofVec3f pos);
-		void update(float delta);
-		ofVec3f getPos();
-		
-		ofVec3f getRotateAxis();
-		float getRotate();
-
-		void toggle();
-
-	private:
-		enum eAnimState
-		{
-			eRotateMode = 0,
-			eRotateToStay,
-			eStayMode,
-			eStayToRotate
-		}_eState;
-
-		//Rotate Mode
-		float _theta, _sigma, _vT, _vS;
-		float _r;
-		ofVec3f _axis;
-		float _rD, _vR;
-
-		//Stay Mode
-		ofVec3f _stayPos;
-
-	private:
-		ofVec3f getRotatePos();
-		//Animation
-		ofxAnimatableOfPoint	_animPos;
-		ofxAnimatableFloat _animRotate;
-
-	};
-#pragma endregion
-
-
 public:
 	wordUnit()
-		:_isSetup(false)
+		:_isSet(false)
+		, _eState(eTextCode)
 	{};
 
-	void setup(wstring word);
+	void init();
+	void addText(wstring word);
+	void setText(int idx);
 	void update(float delta);
 	void draw(int x, int y, int z = 0);
+	void drawGlow(int x, int y, int z = 0);
 
 	int getTextNum();
-	void toggleText(int idx);
+	void triggerText(int idx);
 
 private:
-	bool _isSetup;
-	ofIcoSpherePrimitive _sphere;
-	vector<textUnit> _textMgr;
-	vector<vector<pUnit>> _movePoint;
+	bool _isSet;
+	int _textNum;
+	array<textAnim, cTriggerEachGroup> _textAnimMgr;
+	vector<vector<text>> _textMgr;
+
+private:
+	void initSphere();
+	void updateSphere(float delta);
+	void triggerSphere();
+private:
+	ofxAnimatableFloat _animSize, _animAlpha;
+	ofSpherePrimitive _sphere;
+	eTextState _eState;
 };

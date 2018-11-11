@@ -5,6 +5,8 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
+	bloomFilter::GetInstance()->init(ofGetWindowWidth(), ofGetWindowHeight(), true);
+	bloomFilter::GetInstance()->filterEnable();
 	text2Model::getInstance()->load("font.ttf", "fontUC.ttc");
 	addWords();
 
@@ -33,11 +35,21 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+	
 	_urgMgr.draw(ofGetWindowWidth() * 0.5f, 0);
+	
+	bloomFilter::GetInstance()->_bloom.begin();
+	for (int i = 0; i < cTriggerGroupNum; i++)
+	{
+		_wordList[i].drawGlow(_wordPos[i].x, _wordPos[i].y, 0);
+	}
+	bloomFilter::GetInstance()->_bloom.end();
+
 	for (int i = 0; i < cTriggerGroupNum; i++)
 	{
 		_wordList[i].draw(_wordPos[i].x, _wordPos[i].y, 0);
 	}
+
 
 	triggerTestDraw();
 	ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 0, 100);
@@ -53,7 +65,7 @@ void ofApp::keyPressed(int key){
 		{
 			for (int j = 0; j < _wordList[i].getTextNum(); j++)
 			{
-				_wordList[i].toggleText(j);
+				_wordList[i].triggerText(j);
 			}
 		}
 		break;
@@ -80,16 +92,22 @@ void ofApp::keyPressed(int key){
 void ofApp::addWords()
 {
 	_wordList.resize(10);
-	_wordList[0].setup(L"花");
-	_wordList[1].setup(L"κ砯");
-	_wordList[2].setup(L"ぺ");
-	_wordList[3].setup(L"倍笲");
-	_wordList[4].setup(L"竤");
-	_wordList[5].setup(L"腳琄");
-	_wordList[6].setup(L"φΨホ");
-	_wordList[7].setup(L"硂柑");
-	_wordList[8].setup(L"玡");
-	_wordList[9].setup(L"常⊿Τ");
+	_wordList[0].addText(L"花");
+	_wordList[1].addText(L"κ砯");
+	_wordList[2].addText(L"ぺ");
+	_wordList[3].addText(L"倍笲");
+	_wordList[4].addText(L"竤");
+	_wordList[5].addText(L"腳琄");
+	_wordList[6].addText(L"φΨホ");
+	_wordList[7].addText(L"硂柑");
+	_wordList[8].addText(L"玡");
+	_wordList[9].addText(L"常⊿Τ");
+
+	for (int i = 0; i < cTriggerGroupNum; i++)
+	{
+		_wordList[i].init();
+		_wordList[i].setText(0);
+	}
 
 	float unitW = ofGetWindowWidth() / 11.0f;
 	float x = unitW;
@@ -122,11 +140,11 @@ void ofApp::triggerWord(int group, int id)
 	{
 		if (id == 0)
 		{
-			_wordList[group].toggleText(0);
+			_wordList[group].triggerText(0);
 		}
 		else if(id == 2)
 		{
-			_wordList[group].toggleText(1);
+			_wordList[group].triggerText(1);
 		}
 		break;
 	}
@@ -134,7 +152,7 @@ void ofApp::triggerWord(int group, int id)
 	{
 		if (id != 3)
 		{
-			_wordList[group].toggleText(id);
+			_wordList[group].triggerText(id);
 		}
 		break;
 	}
