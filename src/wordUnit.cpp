@@ -125,10 +125,10 @@ void wordUnit::initSphere()
 {
 	_animSize.setDuration(cTextSphereAnimT);
 	_animSize.setCurve(AnimCurve::EASE_IN_OUT_BACK);
-	_animSize.reset(cTextFontSize * 3.0f);
+	_animSize.reset(cTextFontSize * 2.5f);
 	_animAlpha.setDuration(cTextSphereAnimT);
 	_animAlpha.setCurve(AnimCurve::EASE_IN_OUT_BACK);
-	_animAlpha.reset(100);
+	_animAlpha.reset(70);
 
 	_sphere.set(_animSize.getCurrentValue(), 20);
 	_eState = eTextState::eTextCode;
@@ -159,26 +159,29 @@ void wordUnit::triggerSphere()
 		case eTextCode:
 		{
 			_eState = eTextLightOn;
-			_animSize.animateTo(cTextFontSize * 2.5f);
+			_animSize.animateTo(cTextFontSize * 2.0f);
 			_animAlpha.animateTo(60);
 			break;
 		}
 		case eTextLightOn:
 		{
 			_eState = eTextDisplayPart;
-			_animSize.animateTo(cTextFontSize * 2.0f);
+			_animSize.animateTo(cTextFontSize * 1.5f);
 			_animAlpha.animateTo(20);
 			break;
 		}
 		case eTextDisplayPart:
 		{
 			_eState = eTextDisplayAll;
-			_animSize.animateTo(cTextFontSize * 1.5f);
+			_animSize.animateTo(0);
 			_animAlpha.animateTo(0);
 			break;
 		}
 		case eTextDisplayAll:
 		{
+			_eState = eTextCode;
+			_animSize.animateTo(cTextFontSize * 2.5f);
+			_animAlpha.animateTo(70);
 			break;
 		}
 		}

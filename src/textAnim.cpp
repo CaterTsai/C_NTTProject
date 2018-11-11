@@ -308,6 +308,12 @@ void textAnim::trigger()
 	}
 	case eTextDisplayAll:
 	{
+		_eState = eTextCode;
+		for (int i = 0; i < _moveList.size(); i++)
+		{
+			_moveList[i].toRotate();
+		}
+		_animGlowAlpha.reset(0);
 		break;
 	}
 	}
