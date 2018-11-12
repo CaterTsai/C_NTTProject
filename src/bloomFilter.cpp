@@ -7,6 +7,8 @@ void bloomFilter::init(int w, int h, bool arb)
 
 	_bloom.createPass<BloomPass>()->setEnabled(false);
 	_bloom.createPass<BloomPass>()->setEnabled(false);
+	_bloom.createPass<BloomPass>()->setEnabled(false);
+	
 	_bloom.setFlip(false);
 
 }
@@ -14,16 +16,19 @@ void bloomFilter::init(int w, int h, bool arb)
 //-------------------------------------
 void bloomFilter::filterEnable()
 {
-	_bloom[0]->enable();
-	_bloom[1]->enable();
-
+	for (int i = 0; i < _bloom.size(); i++)
+	{
+		_bloom[i]->enable();
+	}
 }
 
 //-------------------------------------
 void bloomFilter::filterDisable()
 {
-	_bloom[0]->disable();
-	_bloom[1]->disable();
+	for (int i = 0; i < _bloom.size(); i++)
+	{
+		_bloom[i]->disable();
+	}
 
 }
 

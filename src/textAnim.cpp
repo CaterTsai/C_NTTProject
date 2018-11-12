@@ -21,8 +21,8 @@ textAnim::pUnit::pUnit(float r, ofVec3f pos)
 	_theta = ofRandom(0, PI);
 	_sigma = ofRandom(0, TWO_PI);
 
-	_vT = ofRandom(-TWO_PI, TWO_PI) * 0.1f;
-	_vS = ofRandom(-TWO_PI, TWO_PI) * 0.1f;
+	_vT = ofRandom(-TWO_PI, TWO_PI) * 0.2f;
+	_vS = ofRandom(-TWO_PI, TWO_PI) * 0.2f;
 
 	_axis.set(ofRandom(-1, 1), ofRandom(-1, 1), ofRandom(-1, 1));
 	_axis.normalize();
@@ -216,7 +216,6 @@ void textAnim::set(text & newText)
 	}
 
 	_animGlowAlpha.setDuration(cTextLightAnimT);
-	_animGlowAlpha.setRepeatType(AnimRepeat::LOOP_BACK_AND_FORTH);
 	_animGlowAlpha.setCurve(AnimCurve::EASE_IN_EASE_OUT);
 	_eState = eTextCode;
 
@@ -281,7 +280,7 @@ void textAnim::trigger()
 	case eTextCode:
 	{
 		_eState = eTextLightOn;
-		_animGlowAlpha.animateTo(255);
+		_animGlowAlpha.animateFromTo(255, 10);
 
 		break;
 	}
@@ -295,6 +294,7 @@ void textAnim::trigger()
 		{
 			_moveList[i].toStay();
 		}
+		_animGlowAlpha.animateFromTo(255, 10);
 		break;
 	}
 	case eTextDisplayPart:
@@ -304,6 +304,7 @@ void textAnim::trigger()
 		{
 			_moveList[i].toStay();
 		}
+		_animGlowAlpha.animateFromTo(255, 10);
 		break;
 	}
 	case eTextDisplayAll:

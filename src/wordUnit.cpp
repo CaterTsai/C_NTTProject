@@ -125,9 +125,11 @@ void wordUnit::initSphere()
 {
 	_animSize.setDuration(cTextSphereAnimT);
 	_animSize.setCurve(AnimCurve::EASE_IN_OUT_BACK);
+	_animSize.setEaseBackOffset(2.0);
 	_animSize.reset(cTextFontSize * 2.5f);
 	_animAlpha.setDuration(cTextSphereAnimT);
 	_animAlpha.setCurve(AnimCurve::EASE_IN_OUT_BACK);
+	_animAlpha.setEaseBackOffset(2.0);
 	_animAlpha.reset(70);
 
 	_sphere.set(_animSize.getCurrentValue(), 20);
@@ -173,7 +175,7 @@ void wordUnit::triggerSphere()
 		case eTextDisplayPart:
 		{
 			_eState = eTextDisplayAll;
-			_animSize.animateTo(0);
+			_animSize.animateTo(cTextFontSize * 0.5f);
 			_animAlpha.animateTo(0);
 			break;
 		}
