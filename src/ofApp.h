@@ -49,13 +49,14 @@ private:
 
 //DEBUG
 public:
-	void triggerTestStart();
+	void triggerTestStart(float t);
+	void triggerTestStop();
 	void triggerTestUpdate(float delta);
 	void triggerTestDraw();
 private:
 	bool _testStart;
 	int _testIdx;
-	float _testTimer;
+	float _testTimer, _testTimeSet;
 
 
 };

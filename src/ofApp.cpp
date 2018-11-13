@@ -15,6 +15,9 @@ void ofApp::setup(){
 	
 	ofBackground(0);
 	_timer = ofGetElapsedTimef();
+
+	//DEBUG
+	_testIdx = 0;
 }
 
 //--------------------------------------------------------------
@@ -59,30 +62,30 @@ void ofApp::draw(){
 void ofApp::keyPressed(int key){
 	switch (key)
 	{
+	//case 'q':
+	//{
+	//	for (int i = 0; i < cTriggerGroupNum; i++)
+	//	{
+	//		for (int j = 0; j < _wordList[i].getTextNum(); j++)
+	//		{
+	//			_wordList[i].triggerText(j);
+	//		}
+	//	}
+	//	break;
+	//}
 	case 'q':
 	{
-		for (int i = 0; i < cTriggerGroupNum; i++)
-		{
-			for (int j = 0; j < _wordList[i].getTextNum(); j++)
-			{
-				_wordList[i].triggerText(j);
-			}
-		}
+		triggerTestStart(0.25f);
 		break;
 	}
 	case 'w':
 	{
-		triggerTestStart();
-		break;
-	}
-	case 'a':
-	{	
-		_urgMgr.start();
+		triggerTestStart(0.5f);
 		break;
 	}
 	case 's':
 	{
-		_urgMgr.stop();
+		triggerTestStop();
 		break;
 	}
 	}
@@ -219,13 +222,22 @@ void ofApp::onTriggerOff(string & id)
 
 #pragma region DEBUG
 //--------------------------------------------------------------
-void ofApp::triggerTestStart()
+void ofApp::triggerTestStart(float t)
 {
+	if (_testStart)
+	{
+		return;
+	}
 	_testStart = true;
-	_testIdx = 0;
-	_testTimer = cTriggerTestT;
+	_testTimer = _testTimeSet = t;
 
 	
+}
+
+//--------------------------------------------------------------
+void ofApp::triggerTestStop()
+{
+	_testStart = false;
 }
 
 //--------------------------------------------------------------
@@ -249,7 +261,7 @@ void ofApp::triggerTestUpdate(float delta)
 
 		_testIdx = (_testIdx + 1) % cTriggerNum;
 		
-		_testTimer = cTriggerTestT;
+		_testTimer = _testTimeSet;
 	}
 }
 
