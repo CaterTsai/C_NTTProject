@@ -110,7 +110,7 @@ int wordUnit::getTextNum()
 }
 
 //------------------------------------
-void wordUnit::triggerText(int idx)
+eTextState wordUnit::triggerText(int idx)
 {
 	if (idx >= 0 && idx < getTextNum())
 	{
@@ -118,6 +118,8 @@ void wordUnit::triggerText(int idx)
 	}
 
 	triggerSphere();
+
+	return _textAnimMgr[idx]._eState;
 }
 
 //------------------------------------
@@ -149,10 +151,11 @@ void wordUnit::updateSphere(float delta)
 void wordUnit::triggerSphere()
 {
 	bool canTrigger = true;
-	for (auto& iter : _textAnimMgr)
+	for (int i = 0; i < _textNum; i++)
 	{
-		canTrigger &= (iter._eState != _eState);
+		canTrigger &= (_textAnimMgr[i]._eState != _eState);
 	}
+
 
 	if (canTrigger)
 	{

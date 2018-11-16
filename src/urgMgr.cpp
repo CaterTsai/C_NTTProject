@@ -73,6 +73,21 @@ void urgMgr::triggerArea::finish()
 }
 
 //-----------------------------
+void urgMgr::triggerArea::testCheck(ofRectangle testRect)
+{
+	if (_isTrigger)
+	{
+		return;
+	}
+
+	if (testRect.intersects(_rect))
+	{
+		_isTrigger = true;
+	}
+}
+
+
+//-----------------------------
 void urgMgr::triggerArea::clear()
 {
 	
@@ -88,6 +103,7 @@ urgMgr::urgMgr()
 	, _startDeg(-90)
 	, _endDeg(90)
 	, _mm2pix(0.5f)
+	, _testRectSize(50)
 {
 }
 
@@ -210,5 +226,78 @@ ofVec2f urgMgr::getPos(int index, long dist)
 	float rad = (_startDeg + index * _degOfUnit) * DEG_TO_RAD;
 	return ofVec2f(sin(rad) * dist, cos(rad) * dist);
 }
+
+#pragma region Test Mode
+//-----------------------------
+void urgMgr::testUpdate(float delta)
+{
+	for (auto& iter : _triggerAreaList)
+	{
+		iter.clear();
+	}
+	for (int i = 0; i < _testPoint.size(); i++)
+	{
+		_testPoint[i].update(delta);
+		_testRect[i].setPosition(_testPoint[i].getCurrentPosition());
+
+		for (auto& tArea : _triggerAreaList)
+		{
+			tArea.testCheck(_testRect[i]);
+		}
+	}
+
+	for (auto& tArea : _triggerAreaList)
+	{
+		tArea.finish();
+	}
+	
+}
+
+//-----------------------------
+void urgMgr::testDraw(int x, int y)
+{
+	ofPushMatrix();
+	ofTranslate(x, y);
+	{
+		for (auto iter : _testRect)
+		{
+			iter.scaleFromCenter(_mm2pix);
+			iter.x = iter.getCenter().x * _mm2pix - iter.getWidth() * 0.5f;
+			iter.y = iter.getCenter().y * _mm2pix - iter.getHeight() * 0.5f;
+			ofDrawRectangle(iter);
+		}
+		drawArea();
+	}
+	ofPopMatrix();
+}
+
+//-----------------------------
+void urgMgr::addTestPoint(ofVec2f s, ofVec2f e, float duration)
+{
+	ofRectangle rect;
+	rect.set(s, _testRectSize, _testRectSize);
+	_testRect.push_back(rect);
+
+	ofxAnimatableOfPoint newAnim;
+	newAnim.setDuration(duration);
+	newAnim.setRepeatType(AnimRepeat::LOOP);
+	newAnim.setPosition(s);
+	_testPoint.push_back(newAnim);
+
+	
+	_testPoint.back().animateTo(e);
+	
+}
+
+//-----------------------------
+void urgMgr::clearTestPoint()
+{
+	_testPoint.clear();
+	_testRect.clear();
+}
+
+
+#pragma endregion
+
 
 

@@ -11,8 +11,8 @@ static const int cTriggerGroupNum = 10;
 static const int cTriggerEachGroup = 4;
 static const int cTriggerNum = cTriggerGroupNum * cTriggerEachGroup;
 
+static const int cTriggerStateNum = 3;
 
-static const float cTriggerTestT = 0.25f;
-
+static const float cTriggerTestT = 0.5f;
 static const float cTextLightAnimT = 1.5f;
 static const float cTextSphereAnimT = 0.5f;

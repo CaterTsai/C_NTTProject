@@ -5,27 +5,32 @@ void maxSender::init(string ip, int port)
 {
 	_ip = ip;
 	_port = port;
-	_on.setAddress("/oscVal");
-	_on.addBoolArg(true);
+
+	for (int i = 0; i < cTriggerStateNum; i++)
+	{
+		_trigger[i].setAddress("/oscVal");
+		_trigger[i].addIntArg(i + 1);
+	}
+	
 	_off.setAddress("/oscVal");
-	_off.addBoolArg(false);
+	_off.addIntArg(0);
 	
 	_sender.setup(_ip, port);
 	_isInit = true;
 }
 
 //------------------------------------------
-void maxSender::setOn()
+void maxSender::trigger(int state)
 {
 	if (!_isInit)
 	{
 		return;
 	}
-	_sender.sendMessage(_on, false);
+	_sender.sendMessage(_trigger[state], false);
 }
 
 //------------------------------------------
-void maxSender::setOff()
+void maxSender::off()
 {
 	if (!_isInit)
 	{

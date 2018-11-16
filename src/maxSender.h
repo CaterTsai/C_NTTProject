@@ -11,13 +11,14 @@ public:
 	{};
 	void init(string ip, int port);
 
-	void setOn();
-	void setOff();
+	void trigger(int i);
+	void off();
 
 private:
 	bool _isInit;
 	ofxOscSender _sender;
-	ofxOscMessage _on, _off;
+	ofxOscMessage _trigger[cTriggerStateNum];
+	ofxOscMessage _off;
 	string _ip;
 	int _port;
 };

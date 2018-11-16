@@ -1,6 +1,7 @@
 #pragma once
 
 #include "constParameter.h"
+#include "ofxAnimatableOfPoint.h"
 
 class urgMgr
 {
@@ -14,8 +15,11 @@ public:
 
 		void draw(float ratio);
 		void check(ofVec2f pos);
+		
 		void finish();
 		void clear();
+
+		void testCheck(ofRectangle rect);
 
 	private:
 		bool _isTrigger, _triggerTmp;
@@ -55,4 +59,19 @@ private:
 	float _degOfUnit;
 	vector<long> _distData;
 	vector<triggerArea> _triggerAreaList;
+
+#pragma region Test Mode
+public:
+	void testUpdate(float delta);
+	void testDraw(int x, int y);
+	void addTestPoint(ofVec2f s, ofVec2f e, float duration);
+	void clearTestPoint();
+private:
+	vector<ofxAnimatableOfPoint> _testPoint;
+	vector<ofRectangle> _testRect;
+	float _testRectSize;
+#pragma endregion
+
+	
+
 };

@@ -10,6 +10,8 @@ enum eTextState : int
 	eTextLightOn,
 	eTextDisplayPart,
 	eTextDisplayAll,
+
+	eTextUnknow = 100
 };
 
 class textAnim

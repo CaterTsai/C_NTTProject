@@ -21,7 +21,7 @@ private:
 #pragma region word unit
 public:
 	void addWords();
-	void triggerWord(int group, int id);
+	eTextState triggerWord(int group, int id);
 private:
 	wordUnit _wordUnit;
 	vector<ofVec3f> _wordPos;

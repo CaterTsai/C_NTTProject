@@ -19,7 +19,7 @@ public:
 	void drawGlow(int x, int y, int z = 0);
 
 	int getTextNum();
-	void triggerText(int idx);
+	eTextState triggerText(int idx);
 
 private:
 	bool _isSet;

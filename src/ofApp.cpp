@@ -30,7 +30,8 @@ void ofApp::update(){
 		_wordList[i].update(delta);
 	}
 	
-	_urgMgr.update(delta);
+	//_urgMgr.update(delta);
+	_urgMgr.testUpdate(delta);
 
 	//DEBUG
 	triggerTestUpdate(delta);
@@ -40,6 +41,7 @@ void ofApp::update(){
 void ofApp::draw(){
 	
 	_urgMgr.draw(ofGetWindowWidth() * 0.5f, 0);
+	
 	
 	bloomFilter::GetInstance()->_bloom.begin();
 	for (int i = 0; i < cTriggerGroupNum; i++)
@@ -53,6 +55,8 @@ void ofApp::draw(){
 		_wordList[i].draw(_wordPos[i].x, _wordPos[i].y, 0);
 	}
 
+	_urgMgr.testDraw(ofGetWindowWidth() * 0.5f, 0);
+
 
 	triggerTestDraw();
 	ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 0, 100);
@@ -62,30 +66,19 @@ void ofApp::draw(){
 void ofApp::keyPressed(int key){
 	switch (key)
 	{
-	//case 'q':
-	//{
-	//	for (int i = 0; i < cTriggerGroupNum; i++)
-	//	{
-	//		for (int j = 0; j < _wordList[i].getTextNum(); j++)
-	//		{
-	//			_wordList[i].triggerText(j);
-	//		}
-	//	}
-	//	break;
-	//}
 	case 'q':
 	{
-		triggerTestStart(0.25f);
+		_urgMgr.addTestPoint(ofVec2f(-1000, 250), ofVec2f(1000, 250), ofRandom(10.0, 20.0));
 		break;
 	}
 	case 'w':
 	{
-		triggerTestStart(0.5f);
+		_urgMgr.addTestPoint(ofVec2f(1000, 250), ofVec2f(-1000, 250), ofRandom(10.0, 20.0));
 		break;
 	}
-	case 's':
+	case 'e':
 	{
-		triggerTestStop();
+		_urgMgr.clearTestPoint();
 		break;
 	}
 	}
@@ -130,24 +123,25 @@ void ofApp::addWords()
 }
 
 //--------------------------------------------------------------
-void ofApp::triggerWord(int group, int id)
+eTextState ofApp::triggerWord(int group, int id)
 {
 	if (group < 0 || group >= _wordList.size())
 	{
-		return;
+		return eTextUnknow;
 	}
 
+	eTextState rState = eTextCode;
 	switch (_wordList[group].getTextNum())
 	{
 	case 2:
 	{
 		if (id == 0)
 		{
-			_wordList[group].triggerText(0);
+			rState = _wordList[group].triggerText(0);
 		}
-		else if(id == 2)
+		else if (id == 2)
 		{
-			_wordList[group].triggerText(1);
+			rState = _wordList[group].triggerText(1);
 		}
 		break;
 	}
@@ -155,11 +149,12 @@ void ofApp::triggerWord(int group, int id)
 	{
 		if (id != 3)
 		{
-			_wordList[group].triggerText(id);
+			rState = _wordList[group].triggerText(id);
 		}
 		break;
 	}
 	}
+	return rState;
 }
 
 #pragma region Max Sender
@@ -176,6 +171,7 @@ void ofApp::initMaxSender()
 }
 #pragma endregion
 
+#pragma region urgMgr
 //--------------------------------------------------------------
 void ofApp::initUrgMgr()
 {
@@ -197,7 +193,6 @@ void ofApp::addTriggerAreas()
 		_urgMgr.addTriggerArea(ofToString(i), x, 200, unitW, unitH);
 		x += unitW;
 	}
-	
 }
 
 //--------------------------------------------------------------
@@ -207,7 +202,11 @@ void ofApp::onTriggerOn(string & id)
 	int group = floor(val / (float)cTriggerEachGroup);
 	int index = val % cTriggerEachGroup;
 
-	triggerWord(group, index);
+	auto newState = triggerWord(group, index);
+	if (newState != eTextCode)
+	{
+		_maxSenderList[val].trigger((int)newState - 1);
+	}
 }
 
 //--------------------------------------------------------------
@@ -218,7 +217,11 @@ void ofApp::onTriggerOff(string & id)
 	int index = val % cTriggerEachGroup;
 
 	triggerWord(group, index);
+	_maxSenderList[val].off();
+
+
 }
+#pragma endregion
 
 #pragma region DEBUG
 //--------------------------------------------------------------
@@ -252,16 +255,20 @@ void ofApp::triggerTestUpdate(float delta)
 	if (_testTimer <= 0.0f)
 	{
 		int offId = (_testIdx - 1) < 0 ? cTriggerNum - 1 : (_testIdx - 1);
-		_maxSenderList[offId].setOff();
+		_maxSenderList[offId].off();
 		int group = floor(_testIdx / (float)cTriggerEachGroup);
 		int index = _testIdx % cTriggerEachGroup;
-		triggerWord(group, index);
+		auto newState = triggerWord(group, index);
 
-		_maxSenderList[_testIdx].setOn();
+		if (newState != eTextCode)
+		{
+			_maxSenderList[_testIdx].trigger((int)newState - 1);
+		}
+
 
 		_testIdx = (_testIdx + 1) % cTriggerNum;
-		
-		_testTimer = _testTimeSet;
+
+		_testTimer = cTriggerTestT;
 	}
 }
 
