@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ofxXmlSettings.h"
 #include "constParameter.h"
 #include "wordUnit.h"
 #include "urgMgr.h"
@@ -20,6 +21,7 @@ private:
 
 #pragma region word unit
 public:
+
 	void addWords();
 	eTextState triggerWord(int group, int id);
 private:
@@ -46,17 +48,6 @@ public:
 private:
 	urgMgr _urgMgr;
 #pragma endregion
-
-//DEBUG
-public:
-	void triggerTestStart(float t);
-	void triggerTestStop();
-	void triggerTestUpdate(float delta);
-	void triggerTestDraw();
-private:
-	bool _testStart;
-	int _testIdx;
-	float _testTimer, _testTimeSet;
 
 
 };

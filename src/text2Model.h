@@ -6,11 +6,11 @@
 class text2Model
 {
 public:
-	void load(string path, string ucPath);
+	void load(string ucPath);
 	void translate(wstring text, float depth, vector<ofVboMesh>& meshList, vector<int>& groupList);
-	vector<ofVboMesh> translate(string text, float depth);
+	void translate(string text, float depth, vector<ofVboMesh>& meshList, vector<int>& groupList);
 
-private:
+public:
 
 	string ws2s(wstring wstr);
 	wstring s2ws(const string & str);
@@ -18,7 +18,6 @@ private:
 private:
 	bool _isLoad;
 	ofxTrueTypeFontUC	_fontUC;
-	ofTrueTypeFont _font;
 //-------------------
 //Singleton
 //-------------------

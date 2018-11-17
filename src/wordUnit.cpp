@@ -12,6 +12,12 @@ void wordUnit::init()
 //------------------------------------
 void wordUnit::addText(wstring word)
 {
+	addText(text2Model::getInstance()->ws2s(word));
+}
+
+//------------------------------------
+void wordUnit::addText(string word)
+{
 	vector<text> textList;
 	vector<ofVboMesh> meshList;
 	vector<int> meshGroup;
@@ -116,7 +122,6 @@ eTextState wordUnit::triggerText(int idx)
 	{
 		_textAnimMgr[idx].trigger();
 	}
-
 	triggerSphere();
 
 	return _textAnimMgr[idx]._eState;

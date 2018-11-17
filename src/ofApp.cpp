@@ -7,7 +7,7 @@ void ofApp::setup(){
 
 	bloomFilter::GetInstance()->init(ofGetWindowWidth(), ofGetWindowHeight(), true);
 	bloomFilter::GetInstance()->filterEnable();
-	text2Model::getInstance()->load("font.ttf", "fontUC.ttc");
+	text2Model::getInstance()->load("fontUC.ttc");
 	addWords();
 
 	initUrgMgr();
@@ -16,8 +16,6 @@ void ofApp::setup(){
 	ofBackground(0);
 	_timer = ofGetElapsedTimef();
 
-	//DEBUG
-	_testIdx = 0;
 }
 
 //--------------------------------------------------------------
@@ -33,8 +31,6 @@ void ofApp::update(){
 	//_urgMgr.update(delta);
 	_urgMgr.testUpdate(delta);
 
-	//DEBUG
-	triggerTestUpdate(delta);
 }
 
 //--------------------------------------------------------------
@@ -58,7 +54,6 @@ void ofApp::draw(){
 	_urgMgr.testDraw(ofGetWindowWidth() * 0.5f, 0);
 
 
-	triggerTestDraw();
 	ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 0, 100);
 }
 
@@ -88,21 +83,39 @@ void ofApp::keyPressed(int key){
 void ofApp::addWords()
 {
 	_wordList.resize(10);
-	_wordList[0].addText(L"豪宅");
-	_wordList[1].addText(L"百貨");
-	_wordList[2].addText(L"巴士站");
-	_wordList[3].addText(L"捷運");
-	_wordList[4].addText(L"人群");
-	_wordList[5].addText(L"吳寶春");
-	_wordList[6].addText(L"耳朵石");
-	_wordList[7].addText(L"這裡");
-	_wordList[8].addText(L"以前");
-	_wordList[9].addText(L"都沒有");
+	ofxXmlSettings _xml;
+	if (!_xml.load("textSet.xml"))
+	{
+		ofLog(OF_LOG_ERROR, "[ofApp::addWords]Load textSet failed");
+		return;
+	}
+	auto textSetNum = _xml.getNumTags("textSet");
+
+	for (int i = 0; i < textSetNum; i++)
+	{
+		_xml.pushTag("textSet", i);
+		auto textNum = _xml.getNumTags("text");
+
+		if (textNum != cTriggerGroupNum)
+		{
+			ofLog(OF_LOG_ERROR, "[ofApp::addWords]Text number is wrong");
+			continue;
+		}
+
+		for (int j = 0; j < textNum; j++)
+		{
+			auto text = _xml.getValue("text", "", j);
+			_wordList[j].addText(text);
+		}
+
+		_xml.popTag();
+	}
+
 
 	for (int i = 0; i < cTriggerGroupNum; i++)
 	{
 		_wordList[i].init();
-		_wordList[i].setText(0);
+		_wordList[i].setText(1);
 	}
 
 	float unitW = ofGetWindowWidth() / 11.0f;
@@ -222,66 +235,3 @@ void ofApp::onTriggerOff(string & id)
 
 }
 #pragma endregion
-
-#pragma region DEBUG
-//--------------------------------------------------------------
-void ofApp::triggerTestStart(float t)
-{
-	if (_testStart)
-	{
-		return;
-	}
-	_testStart = true;
-	_testTimer = _testTimeSet = t;
-
-	
-}
-
-//--------------------------------------------------------------
-void ofApp::triggerTestStop()
-{
-	_testStart = false;
-}
-
-//--------------------------------------------------------------
-void ofApp::triggerTestUpdate(float delta)
-{
-	if (!_testStart)
-	{
-		return;
-	}
-
-	_testTimer -= delta;
-	if (_testTimer <= 0.0f)
-	{
-		int offId = (_testIdx - 1) < 0 ? cTriggerNum - 1 : (_testIdx - 1);
-		_maxSenderList[offId].off();
-		int group = floor(_testIdx / (float)cTriggerEachGroup);
-		int index = _testIdx % cTriggerEachGroup;
-		auto newState = triggerWord(group, index);
-
-		if (newState != eTextCode)
-		{
-			_maxSenderList[_testIdx].trigger((int)newState - 1);
-		}
-
-
-		_testIdx = (_testIdx + 1) % cTriggerNum;
-
-		_testTimer = cTriggerTestT;
-	}
-}
-
-//--------------------------------------------------------------
-void ofApp::triggerTestDraw()
-{
-	if (!_testStart)
-	{
-		return;
-	}
-
-	ofDrawBitmapStringHighlight("Test Index :" + ofToString(_testIdx), 0, 50);
-}
-#pragma endregion
-
-

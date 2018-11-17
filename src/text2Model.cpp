@@ -1,15 +1,8 @@
 #include "text2Model.h"
 
 //--------------------------------------------------------------
-void text2Model::load(string path, string ucPath)
+void text2Model::load(string ucPath)
 {
-	_font.setGlobalDpi(72);
-	if (!_font.load(path, cTextFontSize, true, true, true))
-	{
-		ofLog(OF_LOG_ERROR, "[text2Model::load]Cant load font");
-		return;
-	}
-
 	_fontUC.setGlobalDpi(72);
 	if (!_fontUC.load(ucPath, cTextFontSize, true, true))
 	{
@@ -105,48 +98,39 @@ void text2Model::translate(wstring text, float depth, vector<ofVboMesh>& meshLis
 }
 
 //--------------------------------------------------------------
-vector<ofVboMesh> text2Model::translate(string text, float depth)
+void text2Model::translate(string word, float depth, vector<ofVboMesh>& meshList, vector<int>& groupList)
 {
-	// contains all of the paths of the current word
-	vector <ofPath> word_paths = _font.getStringAsPoints(text, 0);
-	vector <ofVboMesh> front_meshes, back_meshes, side_meshes;
+	meshList.clear();
+	groupList.clear();
 
-	// meshes for the sides and the front of the 3d extruded text
-	vector<ofVboMesh> all_meshes; // returned meshese (sides + front + back)
-
-								  // loop through all the characters paths
+	auto bounding = _fontUC.getStringBoundingBox(word, 0, 0);
+	ofVec3f center((bounding.width) * 0.5f + bounding.x, bounding.y * 0.5, 0);
+	vector <ofPath> word_paths = _fontUC.getStringAsPoints(word, 0);
+	int index = 0;
 	for (int i = 0; i < word_paths.size(); i++) {
 
 		ofVboMesh current_char_mesh;
 
-		// 1. create the front mesh using a temporary ofPath and then extract its tessellation
 
-		// for every char break it into polyline
-		// (simply a collection of the inner and outer points)
 		vector <ofPolyline> char_polylines = word_paths.at(i).getOutline();
+		index += char_polylines.size() + 1;
+		groupList.push_back(index);
 
-		ofVboMesh front; // the final vbos used to store the vertices
-		ofPath front_path; // a temp path used for computing the tessellation of the letter shape
-
-						   // now we build an ofPath using the vertices from the character polylines
-						   // first loop is for each polyline in the character
-						   // see http://openframeworks.cc/documentation/graphics/ofTrueTypeFont/#show_getStringAsPoints
+		ofVboMesh front;
+		ofPath front_path;
 		for (int c = 0; c < char_polylines.size(); c++) {
-			// second loop is for each point on the polyline
 			for (int p = 0; p < char_polylines[c].size(); p++) {
 
 				if (p == 0) {
-					front_path.moveTo(char_polylines[c][p]);
+					front_path.moveTo(char_polylines[c][p] - center);
 				}
 				else {
-					front_path.lineTo(char_polylines[c][p]);
+					front_path.lineTo(char_polylines[c][p] - center);
 				}
 			}
 		}
 		front = front_path.getTessellation();
 		ofVec3f * front_vertices = front.getVerticesPointer();
-
-		// compute the back by just offsetting the vertices of the required amount
 		ofVboMesh back = front;
 
 		for (int v = 0; v < front.getNumVertices(); v++) {
@@ -156,9 +140,9 @@ vector<ofVboMesh> text2Model::translate(string text, float depth)
 		current_char_mesh.append(front);
 		current_char_mesh.append(back);
 
-		all_meshes.push_back(current_char_mesh);
+		meshList.push_back(current_char_mesh);
 
-		// 2. make the extruded sides
+
 		vector <ofPolyline> lines = word_paths.at(i).getOutline();
 		for (int j = 0; j < lines.size(); j++) {
 
@@ -167,8 +151,8 @@ vector<ofVboMesh> text2Model::translate(string text, float depth)
 			int k = 0;
 
 			for (k = 0; k < points.size() - 1; k++) {
-				ofPoint p1 = points.at(k + 0);
-				ofPoint p2 = points.at(k + 1);
+				ofPoint p1 = points.at(k + 0) - center;
+				ofPoint p2 = points.at(k + 1) - center;
 
 				side.addVertex(p1);
 				side.addVertex(p2);
@@ -178,8 +162,8 @@ vector<ofVboMesh> text2Model::translate(string text, float depth)
 			}
 
 			// connect the last to the first
-			ofPoint p1 = points.at(k);
-			ofPoint p2 = points.at(0);
+			ofPoint p1 = points.at(k) - center;
+			ofPoint p2 = points.at(0) - center;
 			side.addVertex(p1);
 			side.addVertex(p2);
 			side.addVertex(ofPoint(p1.x, p1.y, p1.z + depth));
@@ -190,11 +174,9 @@ vector<ofVboMesh> text2Model::translate(string text, float depth)
 
 			side.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
 
-			all_meshes.push_back(side);
+			meshList.push_back(side);
 		}
 	}
-
-	return all_meshes;
 }
 
 //--------------------------------------------------------------

@@ -13,6 +13,7 @@ public:
 
 	void init();
 	void addText(wstring word);
+	void addText(string word);
 	void setText(int idx);
 	void update(float delta);
 	void draw(int x, int y, int z = 0);
