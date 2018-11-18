@@ -6,10 +6,15 @@
 
 enum eTextState : int
 {
-	eTextCode = 0,
+	eTextOut = 0,
+	eTextCode,
+	eTextCode2LightOn,
 	eTextLightOn,
+	eTextLightOn2DisplayPart,
 	eTextDisplayPart,
+	eTextDisplayPart2All,
 	eTextDisplayAll,
+	eTextExplode,
 
 	eTextUnknow = 100
 };
@@ -31,17 +36,18 @@ private:
 
 		void toggle();
 		void toStay();
-		void toRotate();
+		void toOut();
 
-	private:
+	public:
 		enum eAnimState
 		{
 			eRotateMode = 0,
 			eRotateToStay,
 			eStayMode,
-			eStayToRotate
+			eStayToOut,
+			eOutMode
 		}_eState;
-
+	private:
 		//Rotate Mode
 		float _theta, _sigma, _vT, _vS;
 		float _r;
@@ -61,19 +67,29 @@ private:
 #pragma endregion
 
 public:
+	textAnim()
+		:_isSet(false)
+		, _eState(eTextCode)
+	{}
 	void init() {};
 	void set(text& newText);
+	void clear();
 
 	void update(float delta);
 	void draw();
 	void drawGlow();
 
 	void trigger();
+	void explode();
+
+private:
+	void checkAnim();
 
 public:
 	eTextState _eState;
 
 private:
+	bool _isSet;
 	ofxAnimatableFloat _animGlowAlpha;
 	text _text;
 	vector<pUnit> _moveList;

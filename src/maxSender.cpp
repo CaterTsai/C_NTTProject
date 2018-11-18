@@ -22,7 +22,7 @@ void maxSender::init(string ip, int port)
 //------------------------------------------
 void maxSender::trigger(int state)
 {
-	if (!_isInit)
+	if (!_isInit || state == -1)
 	{
 		return;
 	}

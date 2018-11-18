@@ -5,6 +5,7 @@
 #include "wordUnit.h"
 #include "urgMgr.h"
 #include "maxSender.h"
+#include "background.h"
 
 class ofApp : public ofBaseApp{
 
@@ -21,14 +22,25 @@ private:
 
 #pragma region word unit
 public:
-
-	void addWords();
+	void initWords();
+	void updateWordsPos(float delta);
+	void wordEnter();
+	bool checkWordAllDisplay();
+	bool checkWordOut();
 	eTextState triggerWord(int group, int id);
+
+	void onWordDisplay(int& id);
+	void onWordOut(int& id);
 private:
-	wordUnit _wordUnit;
+	bool _wordEnter;
+	int _displayId, _textSetNum;	
+	ofxAnimatableFloat _animPos;
 	vector<ofVec3f> _wordPos;
 	vector<wordUnit> _wordList;
 #pragma endregion
+
+private:
+	background _space;
 
 #pragma region max Sender
 public:
@@ -44,7 +56,8 @@ public:
 	void addTriggerAreas();
 	void onTriggerOn(string& id);
 	void onTriggerOff(string& id);
-		
+
+	void setTriggerEvent(bool isListen);
 private:
 	urgMgr _urgMgr;
 #pragma endregion

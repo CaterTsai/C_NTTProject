@@ -282,11 +282,8 @@ void urgMgr::addTestPoint(ofVec2f s, ofVec2f e, float duration)
 	newAnim.setDuration(duration);
 	newAnim.setRepeatType(AnimRepeat::LOOP);
 	newAnim.setPosition(s);
-	_testPoint.push_back(newAnim);
-
-	
-	_testPoint.back().animateTo(e);
-	
+	_testPoint.push_back(newAnim);	
+	_testPoint.back().animateTo(e);	
 }
 
 //-----------------------------

@@ -63,7 +63,6 @@ void textAnim::pUnit::update(float delta)
 	}
 	case eRotateToStay:
 	{
-
 		if (_animPos.hasFinishedAnimating() && _animPos.getPercentDone() == 1.0 &&
 			_animRotate.hasFinishedAnimating() && _animRotate.getPercentDone() == 1.0)
 		{
@@ -71,12 +70,11 @@ void textAnim::pUnit::update(float delta)
 		}
 		break;
 	}
-	case eStayToRotate:
+	case eStayToOut:
 	{
-		if (_animPos.hasFinishedAnimating() && _animPos.getPercentDone() == 1.0 &&
-			_animRotate.hasFinishedAnimating() && _animRotate.getPercentDone() == 1.0)
+		if (_animPos.hasFinishedAnimating() && _animPos.getPercentDone() == 1.0)
 		{
-			_eState = eRotateMode;
+			_eState = eOutMode;
 		}
 		break;
 	}
@@ -100,8 +98,13 @@ ofVec3f textAnim::pUnit::getPos()
 		result = _stayPos;
 		break;
 	}
+	case eOutMode:
+	{
+		result = _animPos.getCurrentPosition();
+		break;
+	}
 	case eRotateToStay:
-	case eStayToRotate:
+	case eStayToOut:
 	{
 		result = _animPos.getCurrentPosition();
 		break;
@@ -120,7 +123,7 @@ ofVec3f textAnim::pUnit::getRotateAxis()
 //------------------------------------
 float textAnim::pUnit::getRotate()
 {
-	float result;
+	float result = 0.0f;
 	switch (_eState)
 	{
 	case eRotateMode:
@@ -128,18 +131,11 @@ float textAnim::pUnit::getRotate()
 		result = _rD;
 		break;
 	}
-	case eStayMode:
-	{
-		result = 0;
-		break;
-	}
 	case eRotateToStay:
-	case eStayToRotate:
 	{
 		result = _animRotate.getCurrentValue();
 		break;
 	}
-
 	}
 	return result;
 }
@@ -155,7 +151,7 @@ void textAnim::pUnit::toggle()
 	}
 	case eStayMode:
 	{
-		toRotate();
+		toOut();
 	}
 	}
 }
@@ -166,6 +162,12 @@ void textAnim::pUnit::toStay()
 	if (_eState == eRotateMode)
 	{
 		_animPos.setPosition(getRotatePos());
+		_animPos.setDuration(cTextAnimT);
+		_animPos.setCurve(AnimCurve::EASE_IN_EASE_OUT);
+
+		_animRotate.setDuration(cTextAnimT * 1.2);
+		_animRotate.setCurve(AnimCurve::EASE_IN_EASE_OUT);
+		
 		_animRotate.reset(_rD);
 		_animPos.animateTo(_stayPos);
 
@@ -182,16 +184,20 @@ void textAnim::pUnit::toStay()
 }
 
 //------------------------------------
-void textAnim::pUnit::toRotate()
+void textAnim::pUnit::toOut()
 {
 	if (_eState == eStayMode)
 	{
-		_animPos.setPosition(_stayPos);
-		_animPos.animateTo(getRotatePos());
-		_animRotate.animateTo(_rD);
-		_eState = eStayToRotate;
+		ofVec3f v = _stayPos.normalized();
+		v.rotate(ofRandom(-45, 45), v.rotated(-90, ofVec3f(0, 0, 1)));
+		v *= cTextOutLevel;
+		_animPos.setCurve(AnimCurve::EASE_IN_BACK);
+		_animPos.animateTo(v);
+		_animPos.setDuration(cTextOutAnimT);
+		_eState = eStayToOut;
 	}
 }
+
 
 //------------------------------------
 ofVec3f textAnim::pUnit::getRotatePos()
@@ -218,22 +224,37 @@ void textAnim::set(text & newText)
 	_animGlowAlpha.setDuration(cTextLightAnimT);
 	_animGlowAlpha.setCurve(AnimCurve::EASE_IN_EASE_OUT);
 	_eState = eTextCode;
+	_isSet = true;
+}
 
+//------------------------------------
+void textAnim::clear()
+{
+	_isSet = false;
 }
 
 //------------------------------------
 void textAnim::update(float delta)
 {
+	if (!_isSet)
+	{
+		return;
+	}
 	_animGlowAlpha.update(delta);
 	for (auto& iter : _moveList)
 	{
 		iter.update(delta);
 	}
+	checkAnim();
 }
 
 //------------------------------------
 void textAnim::draw()
 {
+	if (!_isSet)
+	{
+		return;
+	}
 	for (int i = 0; i < _text.getPartNum(); i++)
 	{
 		ofPushMatrix();
@@ -249,6 +270,10 @@ void textAnim::draw()
 //------------------------------------
 void textAnim::drawGlow()
 {
+	if (!_isSet)
+	{
+		return;
+	}
 	if (_eState == eTextCode)
 	{
 		return;
@@ -275,18 +300,22 @@ void textAnim::drawGlow()
 //------------------------------------
 void textAnim::trigger()
 {
+	if (!_isSet)
+	{
+		return;
+	}
 	switch (_eState)
 	{
 	case eTextCode:
 	{
-		_eState = eTextLightOn;
+		_eState = eTextCode2LightOn;
 		_animGlowAlpha.animateFromTo(255, 10);
 
 		break;
 	}
 	case eTextLightOn:
 	{
-		_eState = eTextDisplayPart;
+		_eState = eTextLightOn2DisplayPart;
 		int partNum = (int)floor((_moveList.size() / 2.0f));
 		partNum = MAX(partNum, 1);
 
@@ -299,7 +328,7 @@ void textAnim::trigger()
 	}
 	case eTextDisplayPart:
 	{
-		_eState = eTextDisplayAll;
+		_eState = eTextDisplayPart2All;
 		for (int i = 0; i < _moveList.size(); i++)
 		{
 			_moveList[i].toStay();
@@ -307,14 +336,78 @@ void textAnim::trigger()
 		_animGlowAlpha.animateFromTo(255, 10);
 		break;
 	}
-	case eTextDisplayAll:
+	}
+}
+
+//------------------------------------
+void textAnim::explode()
+{
+	if (!_isSet)
 	{
-		_eState = eTextCode;
+		return;
+	}
+	if (_eState == eTextDisplayAll)
+	{
+		_eState = eTextExplode;
 		for (int i = 0; i < _moveList.size(); i++)
 		{
-			_moveList[i].toRotate();
+			_moveList[i].toOut();
 		}
-		_animGlowAlpha.reset(0);
+		_animGlowAlpha.setDuration(cTextOutAnimT);
+		_animGlowAlpha.animateFromTo(255, 0);
+	}
+}
+
+//------------------------------------
+void textAnim::checkAnim()
+{
+	switch (_eState)
+	{
+	case eTextCode2LightOn:
+	{
+		if (_animGlowAlpha.hasFinishedAnimating() && _animGlowAlpha.getPercentDone() == 1.0f)
+		{
+			_eState = eTextLightOn;
+		}
+		break;
+	}
+	case eTextLightOn2DisplayPart:
+	{
+		bool result = true;
+		for (auto& iter : _moveList)
+		{
+			result &= (iter._eState != pUnit::eRotateToStay);
+		}
+		if (result)
+		{
+			_eState = eTextDisplayPart;
+		}
+		break;
+	}
+	case eTextDisplayPart2All:
+	{
+		bool result = true;
+		for (auto& iter : _moveList)
+		{
+			result &= (iter._eState == pUnit::eStayMode);
+		}
+		if (result)
+		{
+			_eState = eTextDisplayAll;
+		}
+		break;
+	}
+	case eTextExplode:
+	{
+		bool result = true;
+		for (auto& iter : _moveList)
+		{
+			result &= (iter._eState == pUnit::eOutMode);
+		}
+		if (result)
+		{
+			_eState = eTextOut;
+		}
 		break;
 	}
 	}

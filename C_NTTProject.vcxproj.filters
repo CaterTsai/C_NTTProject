@@ -226,6 +226,9 @@
     <ClCompile Include="src\textAnim.cpp">
       <Filter>src\wordUnit</Filter>
     </ClCompile>
+    <ClCompile Include="src\background.cpp">
+      <Filter>src\background</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -311,6 +314,9 @@
     </Filter>
     <Filter Include="src\bloomFilter">
       <UniqueIdentifier>{db2dac78-aba5-44e0-b701-5d7a4d053aa4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\background">
+      <UniqueIdentifier>{1cd64472-ed91-45c4-a919-43f43d6e3b8c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -532,6 +538,9 @@
     </ClInclude>
     <ClInclude Include="src\textAnim.h">
       <Filter>src\wordUnit</Filter>
+    </ClInclude>
+    <ClInclude Include="src\background.h">
+      <Filter>src\background</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

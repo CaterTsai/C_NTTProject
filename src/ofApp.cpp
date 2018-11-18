@@ -8,8 +8,9 @@ void ofApp::setup(){
 	bloomFilter::GetInstance()->init(ofGetWindowWidth(), ofGetWindowHeight(), true);
 	bloomFilter::GetInstance()->filterEnable();
 	text2Model::getInstance()->load("fontUC.ttc");
-	addWords();
 
+	_space.init();
+	initWords();
 	initUrgMgr();
 	initMaxSender();
 	
@@ -27,7 +28,8 @@ void ofApp::update(){
 	{
 		_wordList[i].update(delta);
 	}
-	
+	updateWordsPos(delta);
+	_space.update(delta);
 	//_urgMgr.update(delta);
 	_urgMgr.testUpdate(delta);
 
@@ -36,9 +38,8 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	
-	_urgMgr.draw(ofGetWindowWidth() * 0.5f, 0);
-	
-	
+	ofPushMatrix();
+	ofTranslate(0, _animPos.getCurrentValue());
 	bloomFilter::GetInstance()->_bloom.begin();
 	for (int i = 0; i < cTriggerGroupNum; i++)
 	{
@@ -50,10 +51,11 @@ void ofApp::draw(){
 	{
 		_wordList[i].draw(_wordPos[i].x, _wordPos[i].y, 0);
 	}
+	ofPopMatrix();
+	_space.draw();
 
+	_urgMgr.draw(ofGetWindowWidth() * 0.5f, 0);
 	_urgMgr.testDraw(ofGetWindowWidth() * 0.5f, 0);
-
-
 	ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 0, 100);
 }
 
@@ -63,7 +65,7 @@ void ofApp::keyPressed(int key){
 	{
 	case 'q':
 	{
-		_urgMgr.addTestPoint(ofVec2f(-1000, 250), ofVec2f(1000, 250), ofRandom(10.0, 20.0));
+		_urgMgr.addTestPoint(ofVec2f(-1000, 250), ofVec2f(1000, 250), 10.0);
 		break;
 	}
 	case 'w':
@@ -76,29 +78,47 @@ void ofApp::keyPressed(int key){
 		_urgMgr.clearTestPoint();
 		break;
 	}
+	case 'a':
+	{
+		for (int i = 0; i < cTriggerGroupNum; i++)
+		{
+			for (int j = 0; j < _wordList[i].getTextNum(); j++)
+			{
+				_wordList[i].triggerText(j);
+			}
+		}
+		break;
+	}
+	case 'z':
+	{
+		_space.rotate();
+		break;
+	}
 	}
 }
 
+#pragma region WordUnit
+
 //--------------------------------------------------------------
-void ofApp::addWords()
+void ofApp::initWords()
 {
-	_wordList.resize(10);
+	_wordList.resize(cTriggerGroupNum);
 	ofxXmlSettings _xml;
 	if (!_xml.load("textSet.xml"))
 	{
-		ofLog(OF_LOG_ERROR, "[ofApp::addWords]Load textSet failed");
+		ofLog(OF_LOG_ERROR, "[ofApp::initWords]Load textSet failed");
 		return;
 	}
-	auto textSetNum = _xml.getNumTags("textSet");
-
-	for (int i = 0; i < textSetNum; i++)
+	_textSetNum = _xml.getNumTags("textSet");
+	_displayId = 0;
+	for (int i = 0; i < _textSetNum; i++)
 	{
 		_xml.pushTag("textSet", i);
 		auto textNum = _xml.getNumTags("text");
 
 		if (textNum != cTriggerGroupNum)
 		{
-			ofLog(OF_LOG_ERROR, "[ofApp::addWords]Text number is wrong");
+			ofLog(OF_LOG_ERROR, "[ofApp::initWords]Text number is wrong");
 			continue;
 		}
 
@@ -110,21 +130,22 @@ void ofApp::addWords()
 
 		_xml.popTag();
 	}
-
-
 	for (int i = 0; i < cTriggerGroupNum; i++)
 	{
-		_wordList[i].init();
-		_wordList[i].setText(1);
+		_wordList[i].init(i);
+		_wordList[i].setText(_displayId);
 	}
+
+	ofAddListener(wordUnit::_onWordDisplay, this, &ofApp::onWordDisplay);
+	ofAddListener(wordUnit::_onWordOut, this, &ofApp::onWordOut);
 
 	float unitW = ofGetWindowWidth() / 11.0f;
 	float x = unitW;
-	_wordPos.resize(10);
+	_wordPos.resize(cTriggerGroupNum);
 
 	float noiseV = ofRandom(1.0);
 	float delta = 0.01;
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < cTriggerGroupNum; i++)
 	{
 		int y = ofGetWindowHeight() / 2.0f;
 		y += (0.5 - ofNoise(i, noiseV)) * 400;
@@ -132,8 +153,60 @@ void ofApp::addWords()
 		x += unitW;
 		noiseV += delta;
 	}
+	wordEnter();
+}
+
+//--------------------------------------------------------------
+void ofApp::updateWordsPos(float delta)
+{
+	if (!_wordEnter)
+	{
+		return;
+	}
+	_animPos.update(delta);
+	if (_animPos.hasFinishedAnimating() && _animPos.getPercentDone())
+	{
+		setTriggerEvent(true);
+		_wordEnter = false;
+	}
+}
+
+//--------------------------------------------------------------
+void ofApp::wordEnter()
+{
+	_wordEnter = true;
+	_animPos.setDuration(cWordPosAnimT);
+	_animPos.reset(-ofGetWindowHeight());
+	_animPos.animateTo(0.0f);
+
+	_space.rotate();
+}
+
+//--------------------------------------------------------------
+bool ofApp::checkWordAllDisplay()
+{
+	bool isAllFinish = true;
+	for (auto& iter : _wordList)
+	{
+		isAllFinish &= iter.isAllDisplay();
+	}
+
+	return isAllFinish;
 
 }
+
+//--------------------------------------------------------------
+bool ofApp::checkWordOut()
+{
+	bool isAllOut = true;
+	for (auto& iter : _wordList)
+	{
+		isAllOut &= iter.isAllOut();
+	}
+
+	return isAllOut;
+}
+
 
 //--------------------------------------------------------------
 eTextState ofApp::triggerWord(int group, int id)
@@ -146,6 +219,11 @@ eTextState ofApp::triggerWord(int group, int id)
 	eTextState rState = eTextCode;
 	switch (_wordList[group].getTextNum())
 	{
+	case 1:
+	{
+		rState = _wordList[group].triggerText(0);
+		break;
+	}
 	case 2:
 	{
 		if (id == 0)
@@ -170,6 +248,40 @@ eTextState ofApp::triggerWord(int group, int id)
 	return rState;
 }
 
+//--------------------------------------------------------------
+void ofApp::onWordDisplay(int & id)
+{
+	ofLog(OF_LOG_NOTICE, "[ofApp::onWordDisplay]ID :" + ofToString(id));
+	if (checkWordAllDisplay())
+	{
+		ofLog(OF_LOG_NOTICE, "[ofApp::onWordDisplay]All Word Finish");
+		setTriggerEvent(false);
+
+		for (auto& iter : _wordList)
+		{
+			iter.explode();
+		}
+	}
+}
+
+//--------------------------------------------------------------
+void ofApp::onWordOut(int & id)
+{
+	ofLog(OF_LOG_NOTICE, "[ofApp::onWordOut]ID :" + ofToString(id));
+	if (checkWordOut())
+	{
+		ofLog(OF_LOG_NOTICE, "[ofApp::onWordOut]All Word Out");
+
+		_displayId = (_displayId + 1) % _textSetNum;
+		for (auto& iter : _wordList)
+		{
+			iter.setText(_displayId);
+		}
+		wordEnter();
+	}
+}
+#pragma endregion
+
 #pragma region Max Sender
 //--------------------------------------------------------------
 void ofApp::initMaxSender()
@@ -190,9 +302,6 @@ void ofApp::initUrgMgr()
 {
 	_urgMgr.setup("192.168.0.10", 10940, 0.2f);
 	addTriggerAreas();
-
-	ofAddListener(urgMgr::triggerArea::_onTriggerOn, this, &ofApp::onTriggerOn);
-	ofAddListener(urgMgr::triggerArea::_onTriggerOff, this, &ofApp::onTriggerOff);
 }
 
 //--------------------------------------------------------------
@@ -218,7 +327,18 @@ void ofApp::onTriggerOn(string & id)
 	auto newState = triggerWord(group, index);
 	if (newState != eTextCode)
 	{
-		_maxSenderList[val].trigger((int)newState - 1);
+		if (newState == eTextLightOn)
+		{
+			_maxSenderList[val].trigger(0);
+		}
+		else if (newState == eTextDisplayPart)
+		{
+			_maxSenderList[val].trigger(1);
+		}
+		else if (newState == eTextDisplayPart)
+		{
+			_maxSenderList[val].trigger(2);
+		}
 	}
 }
 
@@ -226,12 +346,21 @@ void ofApp::onTriggerOn(string & id)
 void ofApp::onTriggerOff(string & id)
 {
 	auto val = ofToInt(id);
-	int group = floor(val / (float)cTriggerEachGroup);
-	int index = val % cTriggerEachGroup;
-
-	triggerWord(group, index);
 	_maxSenderList[val].off();
+}
 
-
+//--------------------------------------------------------------
+void ofApp::setTriggerEvent(bool isListen)
+{
+	if (isListen)
+	{
+		ofAddListener(urgMgr::triggerArea::_onTriggerOn, this, &ofApp::onTriggerOn);
+		ofAddListener(urgMgr::triggerArea::_onTriggerOff, this, &ofApp::onTriggerOff);
+	}
+	else
+	{
+		ofRemoveListener(urgMgr::triggerArea::_onTriggerOn, this, &ofApp::onTriggerOn);
+		ofRemoveListener(urgMgr::triggerArea::_onTriggerOff, this, &ofApp::onTriggerOff);
+	}
 }
 #pragma endregion

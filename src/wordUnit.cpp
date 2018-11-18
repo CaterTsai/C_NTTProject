@@ -4,8 +4,9 @@
 #pragma region wordUnit
 
 //------------------------------------
-void wordUnit::init()
+void wordUnit::init(int id)
 {
+	_id = id;
 	initSphere();
 }
 
@@ -45,12 +46,23 @@ void wordUnit::setText(int idx)
 	}
 	_textNum = _textMgr[idx].size();
 
-	for (int i = 0; i < _textNum; i++)
+	for (int i = 0; i < cTriggerEachGroup; i++)
 	{
-		_textAnimMgr[i].set(_textMgr[idx][i]);
+		if (i < _textNum)
+		{
+			_textAnimMgr[i].set(_textMgr[idx][i]);
+		}
+		else
+		{
+			_textAnimMgr[i].clear();
+		}
+		
 	}
 
+	initSphere();
+	_animTextAlpha.reset(255);
 	_isSet = true;
+
 }
 
 //------------------------------------
@@ -61,11 +73,17 @@ void wordUnit::update(float delta)
 		return;
 	}
 
+	_animTextAlpha.update(delta);
 	for (auto& iter : _textAnimMgr)
 	{
 		iter.update(delta);
 	}
 	updateSphere(delta);
+
+	if (_needCheckAnim)
+	{
+		checkAnim();
+	}
 }
 
 //------------------------------------
@@ -76,7 +94,7 @@ void wordUnit::draw(int x, int y, int z)
 		return;
 	}
 	ofPushStyle();
-	ofSetColor(255);
+	ofSetColor(255, _animTextAlpha.getCurrentValue());
 	ofPushMatrix();
 	ofTranslate(x, y, z);
 
@@ -85,8 +103,12 @@ void wordUnit::draw(int x, int y, int z)
 		iter.draw();
 	}
 
-	ofSetColor(255, _animAlpha.getCurrentValue());
-	_sphere.drawWireframe();
+	if (!_glowSphere)
+	{
+		ofSetColor(255, _animAlpha.getCurrentValue());
+		_sphere.drawWireframe();
+	}
+	
 
 	ofPopMatrix();
 	ofPopStyle();
@@ -104,9 +126,46 @@ void wordUnit::drawGlow(int x, int y, int z)
 		iter.drawGlow();
 	}
 
+	if (_glowSphere)
+	{
+		ofSetColor(255, _animAlpha.getCurrentValue());
+		_sphere.drawWireframe();
+	}
 
 	ofPopMatrix();
 	ofPopStyle();
+}
+
+//------------------------------------
+bool wordUnit::isAllDisplay()
+{
+	bool result = false;
+	if (_eState == eTextDisplayAll && _animAlpha.hasFinishedAnimating() && _animSize.getPercentDone() == 1.0f)
+	{
+		bool isAllFinish = true;
+		for (int i = 0; i < _textNum; i++)
+		{
+			isAllFinish &= (_textAnimMgr[i]._eState == eTextState::eTextDisplayAll);
+		}
+		result = isAllFinish;
+	}
+	return result;
+}
+
+//------------------------------------
+bool wordUnit::isAllOut()
+{
+	bool result = false;
+	if (_eState == eTextExplode && _animAlpha.hasFinishedAnimating() && _animSize.getPercentDone() == 1.0f)
+	{
+		bool isAllOut = true;
+		for (int i = 0; i < _textNum; i++)
+		{
+			isAllOut &= (_textAnimMgr[i]._eState == eTextState::eTextOut);
+		}
+		result = isAllOut;
+	}
+	return result;
 }
 
 //------------------------------------
@@ -118,15 +177,64 @@ int wordUnit::getTextNum()
 //------------------------------------
 eTextState wordUnit::triggerText(int idx)
 {
-	if (idx >= 0 && idx < getTextNum())
+	if (idx < 0 || idx >= getTextNum())
+	{
+		return eTextUnknow;
+	}
+
+	if (_textAnimMgr[idx]._eState != eTextDisplayAll)
 	{
 		_textAnimMgr[idx].trigger();
+		triggerSphere();
 	}
-	triggerSphere();
-
 	return _textAnimMgr[idx]._eState;
 }
 
+//------------------------------------
+void wordUnit::checkAnim()
+{
+	if (isAllDisplay())
+	{
+		_needCheckAnim = false;
+		ofNotifyEvent(wordUnit::_onWordDisplay, _id);
+	}
+	else if (isAllOut())
+	{
+		_needCheckAnim = false;
+		ofNotifyEvent(wordUnit::_onWordOut, _id);
+	}
+}
+
+//------------------------------------
+void wordUnit::explode()
+{
+	if (_eState != eTextDisplayAll)
+	{
+		return;
+	}
+
+	_eState = eTextExplode;
+	_animTextAlpha.setDuration(cTextOutAnimT);
+	_animTextAlpha.setCurve(AnimCurve::LATE_EASE_IN_EASE_OUT);
+	_animSize.setDuration(cTextOutAnimT);
+	_animAlpha.setDuration(cTextOutAnimT);
+	_animAlpha.setCurve(AnimCurve::EASE_IN_EASE_OUT);
+	
+	_glowSphere = true;
+
+	for (int i = 0; i < _textNum; i++)
+	{
+		_textAnimMgr[i].explode();
+	}
+	_animTextAlpha.animateTo(0.0f);
+	_animSize.animateFromTo(0.0, cTextOutLevel * 0.25);
+	_animAlpha.animateFromTo(255.0f, 0.0f);
+	_needCheckAnim = true;
+	
+}
+
+
+#pragma region Sphere
 //------------------------------------
 void wordUnit::initSphere()
 {
@@ -141,6 +249,8 @@ void wordUnit::initSphere()
 
 	_sphere.set(_animSize.getCurrentValue(), 20);
 	_eState = eTextState::eTextCode;
+
+	_glowSphere = false;
 }
 
 //------------------------------------
@@ -185,18 +295,22 @@ void wordUnit::triggerSphere()
 			_eState = eTextDisplayAll;
 			_animSize.animateTo(cTextFontSize * 0.5f);
 			_animAlpha.animateTo(0);
+			_needCheckAnim = true;
 			break;
 		}
 		case eTextDisplayAll:
 		{
-			_eState = eTextCode;
-			_animSize.animateTo(cTextFontSize * 2.5f);
-			_animAlpha.animateTo(70);
 			break;
 		}
 		}
 	}
 }
+#pragma endregion
+
+#pragma region Event
+ofEvent<int> wordUnit::_onWordDisplay = ofEvent<int>();
+ofEvent<int> wordUnit::_onWordOut = ofEvent<int>();
+#pragma endregion
 
 
 #pragma endregion
