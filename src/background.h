@@ -7,7 +7,7 @@
 class background
 {
 public:
-	void init();
+	void init(int num);
 	void update(float delta);
 	void draw();
 

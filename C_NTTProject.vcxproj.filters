@@ -229,6 +229,9 @@
     <ClCompile Include="src\background.cpp">
       <Filter>src\background</Filter>
     </ClCompile>
+    <ClCompile Include="src\config.cpp">
+      <Filter>src\config</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -317,6 +320,9 @@
     </Filter>
     <Filter Include="src\background">
       <UniqueIdentifier>{1cd64472-ed91-45c4-a919-43f43d6e3b8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\config">
+      <UniqueIdentifier>{e5433210-4c7c-4f8b-8332-d0b14b5c3873}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -541,6 +547,9 @@
     </ClInclude>
     <ClInclude Include="src\background.h">
       <Filter>src\background</Filter>
+    </ClInclude>
+    <ClInclude Include="src\config.h">
+      <Filter>src\config</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

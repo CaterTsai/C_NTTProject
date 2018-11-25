@@ -86,6 +86,11 @@ void urgMgr::triggerArea::testCheck(ofRectangle testRect)
 	}
 }
 
+void urgMgr::triggerArea::updateArea(ofRectangle newRect)
+{
+	_rect = newRect;
+}
+
 
 //-----------------------------
 void urgMgr::triggerArea::clear()
@@ -182,6 +187,30 @@ void urgMgr::addTriggerArea(string id, int x, int y, int width, int height)
 	rect.setFromCenter(x, y, width, height);
 	triggerArea newArea(rect, id);
 	_triggerAreaList.push_back(newArea);
+}
+
+//-----------------------------
+void urgMgr::addListTriggerArea(int num, int dist, int width, int hegiht)
+{
+	float x = width * num * -0.5 + (0.5f * width);
+	for (int i = 0; i < num; i++)
+	{
+		addTriggerArea(ofToString(i), x, dist, width, hegiht);
+		x += width;
+	}
+}
+
+//-----------------------------
+void urgMgr::updateTriggerArea(int dist, int width, int height)
+{
+	float x = width * _triggerAreaList.size() * -0.5 + (0.5f * width);
+	for (int i = 0; i < _triggerAreaList.size(); i++)
+	{
+		ofRectangle rect;
+		rect.setFromCenter(x, dist, width, height);
+		_triggerAreaList[i].updateArea(rect);
+		x += width;
+	}
 }
 
 //-----------------------------

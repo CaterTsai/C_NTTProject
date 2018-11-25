@@ -1,43 +1,58 @@
 #include "ofApp.h"
 #include "text2Model.h"
 #include "urgWrapper.h"
-
+#include "config.h"
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
 
-	bloomFilter::GetInstance()->init(ofGetWindowWidth(), ofGetWindowHeight(), true);
+	config::getInstance()->init();
+
+	ofSetWindowShape(config::getInstance()->_exWindowWidth, config::getInstance()->_exWindowHeight);
+	ofSetWindowPosition(0, 0);
+
+	bloomFilter::GetInstance()->init(config::getInstance()->_exWindowWidth, config::getInstance()->_exWindowHeight, true);
 	bloomFilter::GetInstance()->filterEnable();
 	text2Model::getInstance()->load("fontUC.ttc");
 
-	_space.init();
+	_space.init(config::getInstance()->_exBGSphereNum);
 	initWords();
 	initUrgMgr();
 	initMaxSender();
-	
+
 	ofBackground(0);
 	_timer = ofGetElapsedTimef();
 
+#ifdef _DEBUG
+	_debugMode = true;
+	setConfigListener(true);
+#else
+	_debugMode = false;
+#endif
+
+
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
 	float delta = ofGetElapsedTimef() - _timer;
 	_timer += delta;
+	updateWords(delta);
 
-	for (int i = 0; i < cTriggerGroupNum; i++)
-	{
-		_wordList[i].update(delta);
-	}
-	updateWordsPos(delta);
 	_space.update(delta);
-	//_urgMgr.update(delta);
-	_urgMgr.testUpdate(delta);
 
+	if (config::getInstance()->_exEnableTestMode)
+	{
+		_urgMgr.testUpdate(delta);
+	}
+	else
+	{
+		_urgMgr.update(delta);
+	}
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
-	
+void ofApp::draw() {
+
 	ofPushMatrix();
 	ofTranslate(0, _animPos.getCurrentValue());
 	bloomFilter::GetInstance()->_bloom.begin();
@@ -54,47 +69,67 @@ void ofApp::draw(){
 	ofPopMatrix();
 	_space.draw();
 
-	_urgMgr.draw(ofGetWindowWidth() * 0.5f, 0);
-	_urgMgr.testDraw(ofGetWindowWidth() * 0.5f, 0);
-	ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 0, 100);
+	if (_debugMode)
+	{
+		if (config::getInstance()->_exEnableTestMode)
+		{
+			_urgMgr.testDraw(ofGetWindowWidth() * 0.5f, 0);
+		}
+		else
+		{
+			_urgMgr.draw(ofGetWindowWidth() * 0.5f, 0);
+		}
+		config::getInstance()->draw();
+	}
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-	switch (key)
+void ofApp::keyPressed(int key) {
+
+	if (key == 'd')
 	{
-	case 'q':
-	{
-		_urgMgr.addTestPoint(ofVec2f(-1000, 250), ofVec2f(1000, 250), 10.0);
-		break;
+		_debugMode ^= true;
+
+
 	}
-	case 'w':
+	if (_debugMode)
 	{
-		_urgMgr.addTestPoint(ofVec2f(1000, 250), ofVec2f(-1000, 250), ofRandom(10.0, 20.0));
-		break;
-	}
-	case 'e':
-	{
-		_urgMgr.clearTestPoint();
-		break;
-	}
-	case 'a':
-	{
-		for (int i = 0; i < cTriggerGroupNum; i++)
+		switch (key)
 		{
-			for (int j = 0; j < _wordList[i].getTextNum(); j++)
-			{
-				_wordList[i].triggerText(j);
-			}
+		case 'q':
+		{
+			_urgMgr.addTestPoint(ofVec2f(-1000, 250), ofVec2f(1000, 250), 10.0);
+			break;
 		}
-		break;
+		case 'w':
+		{
+			_urgMgr.addTestPoint(ofVec2f(1000, 250), ofVec2f(-1000, 250), ofRandom(10.0, 20.0));
+			break;
+		}
+		case 'e':
+		{
+			_urgMgr.clearTestPoint();
+			break;
+		}
+		case 'a':
+		{
+			for (int i = 0; i < cTriggerGroupNum; i++)
+			{
+				for (int j = 0; j < _wordList[i].getTextNum(); j++)
+				{
+					_wordList[i].triggerText(j);
+				}
+			}
+			break;
+		}
+		case 's':
+		{
+			config::getInstance()->save();
+			break;
+		}
+		}
 	}
-	case 'z':
-	{
-		_space.rotate();
-		break;
-	}
-	}
+
 }
 
 #pragma region WordUnit
@@ -111,6 +146,7 @@ void ofApp::initWords()
 	}
 	_textSetNum = _xml.getNumTags("textSet");
 	_displayId = 0;
+	_isWaitExplode = false;
 	for (int i = 0; i < _textSetNum; i++)
 	{
 		_xml.pushTag("textSet", i);
@@ -139,7 +175,7 @@ void ofApp::initWords()
 	ofAddListener(wordUnit::_onWordDisplay, this, &ofApp::onWordDisplay);
 	ofAddListener(wordUnit::_onWordOut, this, &ofApp::onWordOut);
 
-	float unitW = ofGetWindowWidth() / 11.0f;
+	float unitW = config::getInstance()->_exWindowWidth / 11.0f;
 	float x = unitW;
 	_wordPos.resize(cTriggerGroupNum);
 
@@ -147,7 +183,7 @@ void ofApp::initWords()
 	float delta = 0.01;
 	for (int i = 0; i < cTriggerGroupNum; i++)
 	{
-		int y = ofGetWindowHeight() / 2.0f;
+		int y = config::getInstance()->_exWindowHeight / 2.0f;
 		y += (0.5 - ofNoise(i, noiseV)) * 400;
 		_wordPos[i].set(x, y);
 		x += unitW;
@@ -156,18 +192,27 @@ void ofApp::initWords()
 	wordEnter();
 }
 
+
 //--------------------------------------------------------------
-void ofApp::updateWordsPos(float delta)
+void ofApp::updateWords(float delta)
 {
-	if (!_wordEnter)
+	for (int i = 0; i < cTriggerGroupNum; i++)
 	{
-		return;
+		_wordList[i].update(delta);
 	}
-	_animPos.update(delta);
-	if (_animPos.hasFinishedAnimating() && _animPos.getPercentDone())
+	updateWordsPos(delta);
+
+	if (_isWaitExplode)
 	{
-		setTriggerEvent(true);
-		_wordEnter = false;
+		_explodeTimer -= delta;
+		if (_explodeTimer <= 0.0f)
+		{
+			for (auto& iter : _wordList)
+			{
+				iter.explode();
+			}
+			_isWaitExplode = false;
+		}
 	}
 }
 
@@ -175,8 +220,8 @@ void ofApp::updateWordsPos(float delta)
 void ofApp::wordEnter()
 {
 	_wordEnter = true;
-	_animPos.setDuration(cWordPosAnimT);
-	_animPos.reset(-ofGetWindowHeight());
+	_animPos.setDuration(config::getInstance()->_transitionT);
+	_animPos.reset(-config::getInstance()->_exWindowHeight);
 	_animPos.animateTo(0.0f);
 
 	_space.rotate();
@@ -256,11 +301,9 @@ void ofApp::onWordDisplay(int & id)
 	{
 		ofLog(OF_LOG_NOTICE, "[ofApp::onWordDisplay]All Word Finish");
 		setTriggerEvent(false);
+		_isWaitExplode = true;
+		_explodeTimer = config::getInstance()->_explodeWaitT;
 
-		for (auto& iter : _wordList)
-		{
-			iter.explode();
-		}
 	}
 }
 
@@ -280,6 +323,21 @@ void ofApp::onWordOut(int & id)
 		wordEnter();
 	}
 }
+
+//--------------------------------------------------------------
+void ofApp::updateWordsPos(float delta)
+{
+	if (!_wordEnter)
+	{
+		return;
+	}
+	_animPos.update(delta);
+	if (_animPos.hasFinishedAnimating() && _animPos.getPercentDone())
+	{
+		setTriggerEvent(true);
+		_wordEnter = false;
+	}
+}
 #pragma endregion
 
 #pragma region Max Sender
@@ -287,8 +345,8 @@ void ofApp::onWordOut(int & id)
 void ofApp::initMaxSender()
 {
 	_maxSenderList.resize(cTriggerNum);
-	string ip = "127.0.0.1";
-	int port = 7400;
+	string ip = config::getInstance()->_exMaxIP;
+	int port = config::getInstance()->_exMaxPort;
 	for (int i = 0; i < cTriggerNum; i++)
 	{
 		_maxSenderList[i].init(ip, port + i);
@@ -300,21 +358,28 @@ void ofApp::initMaxSender()
 //--------------------------------------------------------------
 void ofApp::initUrgMgr()
 {
-	_urgMgr.setup("192.168.0.10", 10940, 0.2f);
-	addTriggerAreas();
+	_urgMgr.setup(config::getInstance()->_exUrgIP, config::getInstance()->_exUrgPort, config::getInstance()->_exUrgMM2Pix);
+	_urgMgr.addListTriggerArea(cTriggerNum, config::getInstance()->_triggerDist, config::getInstance()->_triggerW, config::getInstance()->_triggerH);
+	//addTriggerAreas();
 }
 
 //--------------------------------------------------------------
 void ofApp::addTriggerAreas()
 {
-	float unitW = 50;
-	float unitH = 200;
+	float unitW = config::getInstance()->_triggerW;
+	float unitH = config::getInstance()->_triggerH;
 	float x = unitW * cTriggerNum * -0.5 + (0.5f * unitW);
 	for (int i = 0; i < cTriggerNum; i++)
 	{
-		_urgMgr.addTriggerArea(ofToString(i), x, 200, unitW, unitH);
+		_urgMgr.addTriggerArea(ofToString(i), x, config::getInstance()->_triggerDist, unitW, unitH);
 		x += unitW;
 	}
+}
+
+//--------------------------------------------------------------
+void ofApp::updateTriggerArea()
+{
+	_urgMgr.updateTriggerArea(config::getInstance()->_triggerDist, config::getInstance()->_triggerW, config::getInstance()->_triggerH);
 }
 
 //--------------------------------------------------------------
@@ -362,5 +427,26 @@ void ofApp::setTriggerEvent(bool isListen)
 		ofRemoveListener(urgMgr::triggerArea::_onTriggerOn, this, &ofApp::onTriggerOn);
 		ofRemoveListener(urgMgr::triggerArea::_onTriggerOff, this, &ofApp::onTriggerOff);
 	}
+}
+#pragma endregion
+
+#pragma region Config
+//--------------------------------------------------------------
+void ofApp::setConfigListener(bool isListen)
+{
+	if (isListen)
+	{
+		config::getInstance()->_updateTrigger.addListener(this, &ofApp::onTriggerAreaUpdate);
+	}
+	else
+	{
+		config::getInstance()->_updateTrigger.removeListener(this, &ofApp::onTriggerAreaUpdate);
+	}
+	
+}
+//--------------------------------------------------------------
+void ofApp::onTriggerAreaUpdate()
+{
+	updateTriggerArea();
 }
 #pragma endregion

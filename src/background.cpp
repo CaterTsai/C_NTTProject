@@ -1,8 +1,8 @@
 #include "background.h"
 
-void background::init()
+void background::init(int num)
 {
-	for (int i = 0; i < cBGSphereNum; i++)
+	for (int i = 0; i < num; i++)
 	{
 		ofVec3f v(ofRandom(1000, 2000), 0, 0);
 		v.rotate(ofRandom(0, 360), ofVec3f(ofRandom(-1, 1), ofRandom(-1, 1), ofRandom(-1, 1)));

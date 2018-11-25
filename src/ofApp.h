@@ -7,6 +7,7 @@
 #include "maxSender.h"
 #include "background.h"
 
+
 class ofApp : public ofBaseApp{
 
 public:
@@ -18,12 +19,12 @@ public:
 
 private:
 	float _timer;
-	ofEasyCam _cam;
+	bool _debugMode;
 
 #pragma region word unit
 public:
 	void initWords();
-	void updateWordsPos(float delta);
+	void updateWords(float delta);
 	void wordEnter();
 	bool checkWordAllDisplay();
 	bool checkWordOut();
@@ -32,8 +33,12 @@ public:
 	void onWordDisplay(int& id);
 	void onWordOut(int& id);
 private:
-	bool _wordEnter;
-	int _displayId, _textSetNum;	
+	void updateWordsPos(float delta);
+
+private:
+	bool _wordEnter, _isWaitExplode;
+	int _displayId, _textSetNum;
+	float _explodeTimer;
 	ofxAnimatableFloat _animPos;
 	vector<ofVec3f> _wordPos;
 	vector<wordUnit> _wordList;
@@ -48,18 +53,24 @@ public:
 private:
 	vector<maxSender> _maxSenderList;
 #pragma endregion
-
-
+	
 #pragma region urgMgr
 public:
 	void initUrgMgr();
 	void addTriggerAreas();
+	void updateTriggerArea();
 	void onTriggerOn(string& id);
 	void onTriggerOff(string& id);
 
 	void setTriggerEvent(bool isListen);
 private:
 	urgMgr _urgMgr;
+#pragma endregion
+
+#pragma region Config
+public:
+	void setConfigListener(bool isListen);
+	void onTriggerAreaUpdate();
 #pragma endregion
 
 

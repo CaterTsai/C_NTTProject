@@ -4,7 +4,7 @@
 
 static const int cTextFontSize = 50;
 static const float cTextAnimT = 0.3f;
-static const float cTextOutAnimT = 1.0f;
+static const float cTextOutAnimT = 5.0f;
 static const float cTextOutLevel = 1000;
 static const int cUrgCheckAreaThreshold = 5;
 
@@ -22,3 +22,5 @@ static const float cWordPosAnimT = 3.0f;
 
 
 static const float cBGSphereNum = 300;
+
+static const float cExplodeWaitT = 3.0f;

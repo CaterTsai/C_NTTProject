@@ -198,6 +198,7 @@
     <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\ZoomBlurPass.cpp" />
     <ClCompile Include="src\background.cpp" />
     <ClCompile Include="src\bloomFilter.cpp" />
+    <ClCompile Include="src\config.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\maxSender.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
@@ -277,6 +278,7 @@
     <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\ZoomBlurPass.h" />
     <ClInclude Include="src\background.h" />
     <ClInclude Include="src\bloomFilter.h" />
+    <ClInclude Include="src\config.h" />
     <ClInclude Include="src\constParameter.h" />
     <ClInclude Include="src\maxSender.h" />
     <ClInclude Include="src\ofApp.h" />

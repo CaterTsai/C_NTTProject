@@ -20,6 +20,7 @@ public:
 		void clear();
 
 		void testCheck(ofRectangle rect);
+		void updateArea(ofRectangle rect);
 
 	private:
 		bool _isTrigger, _triggerTmp;
@@ -46,6 +47,8 @@ public:
 	void stop();
 
 	void addTriggerArea(string id, int x, int y, int width, int height);
+	void addListTriggerArea(int num, int dist, int width, int hegiht);
+	void updateTriggerArea(int dist, int width, int height);
 	void drawArea();
 
 private:
