@@ -56,7 +56,7 @@ void wordUnit::setText(int idx)
 		{
 			_textAnimMgr[i].clear();
 		}
-		
+
 	}
 
 	initSphere();
@@ -108,7 +108,7 @@ void wordUnit::draw(int x, int y, int z)
 		ofSetColor(255, _animAlpha.getCurrentValue());
 		_sphere.drawWireframe();
 	}
-	
+
 
 	ofPopMatrix();
 	ofPopStyle();
@@ -219,7 +219,7 @@ void wordUnit::explode()
 	_animSize.setDuration(cTextOutAnimT);
 	_animAlpha.setDuration(cTextOutAnimT);
 	_animAlpha.setCurve(AnimCurve::EASE_IN_EASE_OUT);
-	
+
 	_glowSphere = true;
 
 	for (int i = 0; i < _textNum; i++)
@@ -230,7 +230,7 @@ void wordUnit::explode()
 	_animSize.animateFromTo(0.0, cTextOutLevel * 0.25);
 	_animAlpha.animateFromTo(255.0f, 0.0f);
 	_needCheckAnim = true;
-	
+
 }
 
 
@@ -266,11 +266,28 @@ void wordUnit::updateSphere(float delta)
 void wordUnit::triggerSphere()
 {
 	bool canTrigger = true;
+
 	for (int i = 0; i < _textNum; i++)
 	{
-		canTrigger &= (_textAnimMgr[i]._eState != _eState);
+		switch (_eState)
+		{
+		case eTextCode:
+		{
+			canTrigger &= (_textAnimMgr[i]._eState == eTextLightOn || _textAnimMgr[i]._eState == eTextCode2LightOn);
+			break;
+		}
+		case eTextLightOn:
+		{
+			canTrigger &= (_textAnimMgr[i]._eState == eTextDisplayPart || _textAnimMgr[i]._eState == eTextLightOn2DisplayPart);
+			break;
+		}
+		case eTextDisplayPart:
+		{
+			canTrigger &= (_textAnimMgr[i]._eState == eTextDisplayAll || _textAnimMgr[i]._eState == eTextDisplayPart2All);
+			break;
+		}
+		}
 	}
-
 
 	if (canTrigger)
 	{
@@ -302,6 +319,11 @@ void wordUnit::triggerSphere()
 		{
 			break;
 		}
+		}
+
+		for (int i = 0; i < _textNum; i++)
+		{
+			_textAnimMgr[i].setTrigger(true);
 		}
 	}
 }

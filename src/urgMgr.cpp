@@ -1,6 +1,7 @@
 
 #include "urgWrapper.h"
 #include "urgMgr.h"
+#include "config.h"
 
 #pragma region Trigger Area
 ofEvent<string> urgMgr::triggerArea::_onTriggerOn = ofEvent<string>();
@@ -46,7 +47,7 @@ void urgMgr::triggerArea::check(ofVec2f pos)
 		_checkCounter++;
 	}
 
-	if (_checkCounter > cUrgCheckAreaThreshold)
+	if (_checkCounter > config::getInstance()->_exUsgThreshold);
 	{
 		_isTrigger = true;
 	}

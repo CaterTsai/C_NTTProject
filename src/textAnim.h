@@ -82,6 +82,7 @@ public:
 	void trigger();
 	void explode();
 
+	void setTrigger(bool val);
 private:
 	void checkAnim();
 
@@ -89,7 +90,7 @@ public:
 	eTextState _eState;
 
 private:
-	bool _isSet;
+	bool _isSet, _canTrigger;
 	ofxAnimatableFloat _animGlowAlpha;
 	text _text;
 	vector<pUnit> _moveList;

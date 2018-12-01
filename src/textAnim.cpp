@@ -1,5 +1,5 @@
 #include "textAnim.h"
-
+#include "config.h"
 #pragma region pUnit
 //------------------------------------
 textAnim::pUnit::pUnit()
@@ -225,6 +225,7 @@ void textAnim::set(text & newText)
 	_animGlowAlpha.setCurve(AnimCurve::EASE_IN_EASE_OUT);
 	_eState = eTextCode;
 	_isSet = true;
+	_canTrigger = true;
 }
 
 //------------------------------------
@@ -300,7 +301,7 @@ void textAnim::drawGlow()
 //------------------------------------
 void textAnim::trigger()
 {
-	if (!_isSet)
+	if (!_isSet || !_canTrigger)
 	{
 		return;
 	}
@@ -309,8 +310,8 @@ void textAnim::trigger()
 	case eTextCode:
 	{
 		_eState = eTextCode2LightOn;
-		_animGlowAlpha.animateFromTo(255, 10);
-
+		_animGlowAlpha.animateFromTo(255, config::getInstance()->_glowTextLevel);
+		_canTrigger = false;
 		break;
 	}
 	case eTextLightOn:
@@ -323,7 +324,8 @@ void textAnim::trigger()
 		{
 			_moveList[i].toStay();
 		}
-		_animGlowAlpha.animateFromTo(255, 10);
+		_animGlowAlpha.animateFromTo(255, config::getInstance()->_glowTextLevel);
+		_canTrigger = false;
 		break;
 	}
 	case eTextDisplayPart:
@@ -333,7 +335,8 @@ void textAnim::trigger()
 		{
 			_moveList[i].toStay();
 		}
-		_animGlowAlpha.animateFromTo(255, 10);
+		_animGlowAlpha.animateFromTo(255, config::getInstance()->_glowTextLevel);
+		_canTrigger = false;
 		break;
 	}
 	}
@@ -356,6 +359,12 @@ void textAnim::explode()
 		_animGlowAlpha.setDuration(cTextOutAnimT);
 		_animGlowAlpha.animateFromTo(255, 0);
 	}
+}
+
+//------------------------------------
+void textAnim::setTrigger(bool val)
+{
+	_canTrigger = val;
 }
 
 //------------------------------------

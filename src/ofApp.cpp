@@ -89,7 +89,7 @@ void ofApp::keyPressed(int key) {
 	if (key == 'd')
 	{
 		_debugMode ^= true;
-
+		setConfigListener(_debugMode);
 
 	}
 	if (_debugMode)
@@ -98,12 +98,12 @@ void ofApp::keyPressed(int key) {
 		{
 		case 'q':
 		{
-			_urgMgr.addTestPoint(ofVec2f(-1000, 250), ofVec2f(1000, 250), 10.0);
+			_urgMgr.addTestPoint(ofVec2f(-5000, 1000), ofVec2f(5000, 1000), 10.0);
 			break;
 		}
 		case 'w':
 		{
-			_urgMgr.addTestPoint(ofVec2f(1000, 250), ofVec2f(-1000, 250), ofRandom(10.0, 20.0));
+			_urgMgr.addTestPoint(ofVec2f(5000, 1000), ofVec2f(-5000, 1000), ofRandom(10.0, 20.0));
 			break;
 		}
 		case 'e':
@@ -120,6 +120,11 @@ void ofApp::keyPressed(int key) {
 					_wordList[i].triggerText(j);
 				}
 			}
+			break;
+		}
+		case 'z':
+		{
+			_wordList[0].triggerText(0);
 			break;
 		}
 		case 's':
@@ -361,6 +366,7 @@ void ofApp::initUrgMgr()
 	_urgMgr.setup(config::getInstance()->_exUrgIP, config::getInstance()->_exUrgPort, config::getInstance()->_exUrgMM2Pix);
 	_urgMgr.addListTriggerArea(cTriggerNum, config::getInstance()->_triggerDist, config::getInstance()->_triggerW, config::getInstance()->_triggerH);
 	//addTriggerAreas();
+	_urgMgr.start();
 }
 
 //--------------------------------------------------------------

@@ -23,6 +23,7 @@ public:
 	int _exUrgPort;
 	int _exBGSphereNum;
 	int _exMaxPort;
+	int _exUsgThreshold;
 	float _exUrgMM2Pix;
 	string _exUrgIP;
 	string _exMaxIP;
@@ -30,9 +31,11 @@ public:
 
 	//Gui
 	ofxPanel _gui;
+	ofxIntSlider _glowTextLevel;
 	ofxFloatSlider _transitionT, _explodeWaitT;
 	ofxIntSlider _triggerW, _triggerH, _triggerDist;
 	ofxButton _updateTrigger;
+
 	ofxLabel _fps;
 
 	//-------------------

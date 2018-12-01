@@ -36,13 +36,16 @@ void urgWrapper::draw(float ratio)
 	ofVec2f o(0);
 
 	ofPushStyle();
-	ofSetColor(0, 255, 0, 50);
+	ofSetColor(0, 255, 0, 150);
 	for (int i = 0; i < _dataSize; i++)
 	{
 		auto drawV = v.rotated(-deg);
 		ofLine(o, o + drawV * _data[i] * ratio);
 		deg += unit;
 	}
+
+	ofSetColor(255, 0, 0);
+	ofLine(0, 0, 0, ofGetHeight());
 	ofPopStyle();
 
 }
