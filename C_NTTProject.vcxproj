@@ -232,6 +232,7 @@
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.cpp" />
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlerror.cpp" />
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp" />
+    <ClCompile Include="src\projectionCanvas.cpp" />
     <ClCompile Include="src\text2Model.cpp" />
     <ClCompile Include="src\text.cpp" />
     <ClCompile Include="src\textAnim.cpp" />
@@ -319,6 +320,7 @@
     <ClInclude Include="..\..\..\addons\ofxTrueTypeFontUC\src\ofxTrueTypeFontUC.h" />
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.h" />
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.h" />
+    <ClInclude Include="src\projectionCanvas.h" />
     <ClInclude Include="src\text2Model.h" />
     <ClInclude Include="src\text.h" />
     <ClInclude Include="src\textAnim.h" />

@@ -6,7 +6,7 @@
 void ofApp::setup() {
 
 	config::getInstance()->init();
-
+	_canvas.init(0, 0, 1920, 1080, 10, 10);
 	ofSetWindowShape(config::getInstance()->_exWindowWidth, config::getInstance()->_exWindowHeight);
 	ofSetWindowPosition(0, 0);
 
@@ -53,6 +53,7 @@ void ofApp::update() {
 //--------------------------------------------------------------
 void ofApp::draw() {
 
+	_canvas.begin();
 	ofPushMatrix();
 	ofTranslate(0, _animPos.getCurrentValue());
 	bloomFilter::GetInstance()->_bloom.begin();
@@ -66,11 +67,15 @@ void ofApp::draw() {
 	{
 		_wordList[i].draw(_wordPos[i].x, _wordPos[i].y, 0);
 	}
-	ofPopMatrix();
-	_space.draw();
+	ofPopMatrix();	
+	_canvas.end();
 
+	_canvas.draw();
+	_space.draw();
 	if (_debugMode)
 	{
+		_canvas.drawMesh();
+
 		if (config::getInstance()->_exEnableTestMode)
 		{
 			_urgMgr.testDraw(ofGetWindowWidth() * 0.5f, 0);

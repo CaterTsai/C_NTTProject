@@ -232,6 +232,9 @@
     <ClCompile Include="src\config.cpp">
       <Filter>src\config</Filter>
     </ClCompile>
+    <ClCompile Include="src\projectionCanvas.cpp">
+      <Filter>src\projectionCanvas</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -323,6 +326,9 @@
     </Filter>
     <Filter Include="src\config">
       <UniqueIdentifier>{e5433210-4c7c-4f8b-8332-d0b14b5c3873}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\projectionCanvas">
+      <UniqueIdentifier>{d8ff6cfd-c810-4a53-bb82-d053a3807fea}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -550,6 +556,9 @@
     </ClInclude>
     <ClInclude Include="src\config.h">
       <Filter>src\config</Filter>
+    </ClInclude>
+    <ClInclude Include="src\projectionCanvas.h">
+      <Filter>src\projectionCanvas</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

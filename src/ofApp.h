@@ -6,6 +6,7 @@
 #include "urgMgr.h"
 #include "maxSender.h"
 #include "background.h"
+#include "projectionCanvas.h"
 
 
 class ofApp : public ofBaseApp{
@@ -66,6 +67,14 @@ public:
 private:
 	urgMgr _urgMgr;
 #pragma endregion
+
+#pragma region projection Canvas
+public:
+
+private:
+	projectionCanvas _canvas;
+#pragma endregion
+
 
 #pragma region Config
 public:
