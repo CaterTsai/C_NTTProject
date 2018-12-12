@@ -1,5 +1,6 @@
 #include "wordUnit.h"
 #include "text2Model.h"
+#include "config.h"
 
 #pragma region wordUnit
 
@@ -103,11 +104,11 @@ void wordUnit::draw(int x, int y, int z)
 		iter.draw();
 	}
 
-	if (!_glowSphere)
-	{
-		ofSetColor(255, _animAlpha.getCurrentValue());
-		_sphere.drawWireframe();
-	}
+	//if (!_glowSphere)
+	//{
+	//	ofSetColor(255, _animAlpha.getCurrentValue());
+	//	_sphere.drawWireframe();
+	//}
 
 
 	ofPopMatrix();
@@ -126,11 +127,11 @@ void wordUnit::drawGlow(int x, int y, int z)
 		iter.drawGlow();
 	}
 
-	if (_glowSphere)
-	{
-		ofSetColor(255, _animAlpha.getCurrentValue());
-		_sphere.drawWireframe();
-	}
+	//if (_glowSphere)
+	//{
+	//	ofSetColor(255, _animAlpha.getCurrentValue());
+	//	_sphere.drawWireframe();
+	//}
 
 	ofPopMatrix();
 	ofPopStyle();
@@ -241,7 +242,7 @@ void wordUnit::initSphere()
 	_animSize.setDuration(cTextSphereAnimT);
 	_animSize.setCurve(AnimCurve::EASE_IN_OUT_BACK);
 	_animSize.setEaseBackOffset(2.0);
-	_animSize.reset(cTextFontSize * 2.5f);
+	_animSize.reset(config::getInstance()->_exFontSize * 2.5f);
 	_animAlpha.setDuration(cTextSphereAnimT);
 	_animAlpha.setCurve(AnimCurve::EASE_IN_OUT_BACK);
 	_animAlpha.setEaseBackOffset(2.0);
@@ -296,21 +297,21 @@ void wordUnit::triggerSphere()
 		case eTextCode:
 		{
 			_eState = eTextLightOn;
-			_animSize.animateTo(cTextFontSize * 2.0f);
+			_animSize.animateTo(config::getInstance()->_exFontSize * 2.0f);
 			_animAlpha.animateTo(60);
 			break;
 		}
 		case eTextLightOn:
 		{
 			_eState = eTextDisplayPart;
-			_animSize.animateTo(cTextFontSize * 1.5f);
+			_animSize.animateTo(config::getInstance()->_exFontSize * 1.5f);
 			_animAlpha.animateTo(20);
 			break;
 		}
 		case eTextDisplayPart:
 		{
 			_eState = eTextDisplayAll;
-			_animSize.animateTo(cTextFontSize * 0.5f);
+			_animSize.animateTo(config::getInstance()->_exFontSize * 0.5f);
 			_animAlpha.animateTo(0);
 			_needCheckAnim = true;
 			break;

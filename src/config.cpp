@@ -28,9 +28,9 @@ void config::initGUI()
 	_gui.setup("", "_guiConfig.xml");
 
 	_gui.add(_triggerW.setup("Trigger Width(mm)", 50, 50, 500));
+
 	_gui.add(_triggerH.setup("Trigger Height(mm)", 200, 100, 2000));
-	_gui.add(_glowTextLevel.setup("Glow Level ", 10, 0, 255));
-	
+	_gui.add(_glowTextLevel.setup("Glow Level", 10, 0, 255));
 	_gui.add(_triggerDist.setup("Trigger Distance(mm)", 200, 100, 1500));
 	_gui.add(_updateTrigger.setup("Update Trigger"));
 	_gui.add(_transitionT.setup("Transition Time", 3.0f, 1.0f, 5.0f));
@@ -61,8 +61,15 @@ void config::loadConfig()
 	_exMaxPort = xml.getValue("MaxPort", 7400);
 	_exMaxIP = xml.getValue("MaxIP", "127.0.0.1");
 
+	_exMeshColNum = xml.getValue("MeshColNum", 10);
+	_exMeshRowNum = xml.getValue("MeshRowNum", 10);
+
+	_exTriggerLimit = xml.getValue("TriggerLimit", 3);
 
 	_exUsgThreshold = xml.getValue("UsgThreshold", 3);
+
+	_exFontSize = xml.getValue("FontSize", 50);
+	
 
 }
 

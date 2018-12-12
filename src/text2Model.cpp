@@ -1,10 +1,10 @@
 #include "text2Model.h"
-
+#include "config.h"
 //--------------------------------------------------------------
 void text2Model::load(string ucPath)
 {
 	_fontUC.setGlobalDpi(72);
-	if (!_fontUC.load(ucPath, cTextFontSize, true, true))
+	if (!_fontUC.load(ucPath, config::getInstance()->_exFontSize, true, true))
 	{
 		ofLog(OF_LOG_ERROR, "[text2Model::load]Cant load fontUC");
 		return;

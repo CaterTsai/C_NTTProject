@@ -235,6 +235,9 @@
     <ClCompile Include="src\projectionCanvas.cpp">
       <Filter>src\projectionCanvas</Filter>
     </ClCompile>
+    <ClCompile Include="src\maxChangeSong.cpp">
+      <Filter>src\maxSender</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -559,6 +562,9 @@
     </ClInclude>
     <ClInclude Include="src\projectionCanvas.h">
       <Filter>src\projectionCanvas</Filter>
+    </ClInclude>
+    <ClInclude Include="src\maxChangeSong.h">
+      <Filter>src\maxSender</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -218,7 +218,7 @@ void textAnim::set(text & newText)
 	_moveList.clear();
 	for (int j = 0; j < _text.getPartNum(); j++)
 	{
-		_moveList.push_back(pUnit(cTextFontSize * 1.2f, _text.getPos(j)));
+		_moveList.push_back(pUnit(config::getInstance()->_exFontSize * 1.2f, _text.getPos(j)));
 	}
 
 	_animGlowAlpha.setDuration(cTextLightAnimT);

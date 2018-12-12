@@ -23,11 +23,11 @@ public:
 		void updateArea(ofRectangle rect);
 
 	private:
-		bool _isTrigger, _triggerTmp;
+		bool _isTrigger, _isTriggerTmp, _triggerTmp;
 		ofRectangle _rect;
 		string _id;
 		int _checkCounter;
-
+		int _triggerCounter;
 	public:
 		//Global Event
 		static ofEvent<string> _onTriggerOn;

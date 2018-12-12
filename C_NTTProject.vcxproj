@@ -139,7 +139,7 @@
     </ClCompile>
     <Link>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <GenerateDebugInformation>No</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -200,6 +200,7 @@
     <ClCompile Include="src\bloomFilter.cpp" />
     <ClCompile Include="src\config.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\maxChangeSong.cpp" />
     <ClCompile Include="src\maxSender.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
     <ClCompile Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatable.cpp" />
@@ -281,6 +282,7 @@
     <ClInclude Include="src\bloomFilter.h" />
     <ClInclude Include="src\config.h" />
     <ClInclude Include="src\constParameter.h" />
+    <ClInclude Include="src\maxChangeSong.h" />
     <ClInclude Include="src\maxSender.h" />
     <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatable.h" />

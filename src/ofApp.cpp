@@ -6,13 +6,15 @@
 void ofApp::setup() {
 
 	config::getInstance()->init();
-	_canvas.init(0, 0, 1920, 1080, 10, 10);
+	_canvas[0].init(0, 0, 0, config::getInstance()->_exWindowWidth * 0.5, config::getInstance()->_exWindowHeight, config::getInstance()->_exMeshColNum, config::getInstance()->_exMeshRowNum);
+	_canvas[1].init(1, 0, 0, config::getInstance()->_exWindowWidth * 0.5, config::getInstance()->_exWindowHeight, config::getInstance()->_exMeshColNum, config::getInstance()->_exMeshRowNum);
+
 	ofSetWindowShape(config::getInstance()->_exWindowWidth, config::getInstance()->_exWindowHeight);
 	ofSetWindowPosition(0, 0);
 
 	bloomFilter::GetInstance()->init(config::getInstance()->_exWindowWidth, config::getInstance()->_exWindowHeight, true);
 	bloomFilter::GetInstance()->filterEnable();
-	text2Model::getInstance()->load("fontUC.ttc");
+	text2Model::getInstance()->load("fontUC.otf");
 
 	_space.init(config::getInstance()->_exBGSphereNum);
 	initWords();
@@ -25,11 +27,13 @@ void ofApp::setup() {
 #ifdef _DEBUG
 	_debugMode = true;
 	setConfigListener(true);
+
 #else
 	_debugMode = false;
+	ofHideCursor();
 #endif
 
-
+	_maxChangeSong.change(_displayId + 1);
 }
 
 //--------------------------------------------------------------
@@ -48,33 +52,69 @@ void ofApp::update() {
 	{
 		_urgMgr.update(delta);
 	}
+
 }
 
 //--------------------------------------------------------------
 void ofApp::draw() {
 
-	_canvas.begin();
+	_canvas[0].begin();
 	ofPushMatrix();
 	ofTranslate(0, _animPos.getCurrentValue());
 	bloomFilter::GetInstance()->_bloom.begin();
-	for (int i = 0; i < cTriggerGroupNum; i++)
+	for (int i = 0; i < cTriggerGroupNum / 2.0f; i++)
 	{
 		_wordList[i].drawGlow(_wordPos[i].x, _wordPos[i].y, 0);
 	}
 	bloomFilter::GetInstance()->_bloom.end();
 
-	for (int i = 0; i < cTriggerGroupNum; i++)
+	for (int i = 0; i < cTriggerGroupNum / 2.0f; i++)
 	{
 		_wordList[i].draw(_wordPos[i].x, _wordPos[i].y, 0);
 	}
-	ofPopMatrix();	
-	_canvas.end();
+	ofPopMatrix();
+	_canvas[0].end();
 
-	_canvas.draw();
+	_canvas[1].begin();
+	ofPushMatrix();
+	ofTranslate(0, _animPos.getCurrentValue());
+	bloomFilter::GetInstance()->_bloom.begin();
+	for (int i = cTriggerGroupNum / 2.0f; i < cTriggerGroupNum; i++)
+	{
+		_wordList[i].drawGlow(_wordPos[i].x, _wordPos[i].y, 0);
+	}
+	bloomFilter::GetInstance()->_bloom.end();
+
+	for (int i = cTriggerGroupNum / 2.0f; i < cTriggerGroupNum; i++)
+	{
+		_wordList[i].draw(_wordPos[i].x, _wordPos[i].y, 0);
+	}
+	ofPopMatrix();
+
+	_canvas[1].end();
+
+
+	_canvas[0].draw();
+	
+	ofPushMatrix();
+	ofTranslate(config::getInstance()->_exWindowWidth * 0.5, 0);
+	_canvas[1].draw();
+	ofPopMatrix();
+	
 	_space.draw();
+
 	if (_debugMode)
 	{
-		_canvas.drawMesh();
+		_canvas[0].debugUpdate();
+		_canvas[1].debugUpdate();
+
+		_canvas[0].debugDraw();
+
+		ofPushMatrix();
+		ofTranslate(config::getInstance()->_exWindowWidth * 0.5, 0);
+		_canvas[1].debugDraw();
+		_space.draw();
+		ofPopMatrix();
 
 		if (config::getInstance()->_exEnableTestMode)
 		{
@@ -91,9 +131,17 @@ void ofApp::draw() {
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
 
-	if (key == 'd')
+	if (key == '0')
 	{
 		_debugMode ^= true;
+		if (_debugMode)
+		{
+			ofShowCursor();
+		}
+		else
+		{
+			ofHideCursor();
+		}
 		setConfigListener(_debugMode);
 
 	}
@@ -137,9 +185,44 @@ void ofApp::keyPressed(int key) {
 			config::getInstance()->save();
 			break;
 		}
+		case 'd':
+		{
+			_canvas[0].setDebugMode(!_canvas[0].getDebugMode());
+			break;
+		}
+		case 'f':
+		{
+			_canvas[1].setDebugMode(!_canvas[1].getDebugMode());
+			break;
+		}
+		}
+
+		if (_canvas[0].getDebugMode())
+		{
+			_canvas[0].debugCtrl(key);
+		}
+		if (_canvas[1].getDebugMode())
+		{
+			_canvas[1].debugCtrl(key);
 		}
 	}
 
+}
+
+void ofApp::mouseDragged(int x, int y, int button)
+{
+	if (_debugMode)
+	{
+		if (_canvas[0].getDebugMode() && button == OF_MOUSE_BUTTON_LEFT)
+		{
+			_canvas[0].debugMouseCtrl(x, y);
+		}
+		if (_canvas[1].getDebugMode() && button == OF_MOUSE_BUTTON_LEFT)
+		{
+			_canvas[1].debugMouseCtrl(x - config::getInstance()->_exWindowWidth * 0.5f, y);
+		}
+
+	}
 }
 
 #pragma region WordUnit
@@ -185,14 +268,17 @@ void ofApp::initWords()
 	ofAddListener(wordUnit::_onWordDisplay, this, &ofApp::onWordDisplay);
 	ofAddListener(wordUnit::_onWordOut, this, &ofApp::onWordOut);
 
-	float unitW = config::getInstance()->_exWindowWidth / 11.0f;
+	float unitW = (config::getInstance()->_exWindowWidth * 0.5) / 6.0f;
 	float x = unitW;
 	_wordPos.resize(cTriggerGroupNum);
-
 	float noiseV = ofRandom(1.0);
 	float delta = 0.01;
-	for (int i = 0; i < cTriggerGroupNum; i++)
+	for (int i = 0; i < cTriggerGroupNum ; i++)
 	{
+		if (i == 5)
+		{
+			x = unitW;
+		}
 		int y = config::getInstance()->_exWindowHeight / 2.0f;
 		y += (0.5 - ofNoise(i, noiseV)) * 400;
 		_wordPos[i].set(x, y);
@@ -299,6 +385,24 @@ eTextState ofApp::triggerWord(int group, int id)
 		}
 		break;
 	}
+	case 7: {
+		if (id == 0)
+		{
+			rState = _wordList[group].triggerText(0);
+			rState = _wordList[group].triggerText(1);
+			rState = _wordList[group].triggerText(2);
+		}
+		else if (id == 1)
+		{
+			rState = _wordList[group].triggerText(3);
+		}
+		else if (id == 2)
+		{
+			rState = _wordList[group].triggerText(4);
+			rState = _wordList[group].triggerText(5);
+			rState = _wordList[group].triggerText(6);
+		}
+	}
 	}
 	return rState;
 }
@@ -306,10 +410,10 @@ eTextState ofApp::triggerWord(int group, int id)
 //--------------------------------------------------------------
 void ofApp::onWordDisplay(int & id)
 {
-	ofLog(OF_LOG_NOTICE, "[ofApp::onWordDisplay]ID :" + ofToString(id));
+	//ofLog(OF_LOG_NOTICE, "[ofApp::onWordDisplay]ID :" + ofToString(id));
 	if (checkWordAllDisplay())
 	{
-		ofLog(OF_LOG_NOTICE, "[ofApp::onWordDisplay]All Word Finish");
+		//ofLog(OF_LOG_NOTICE, "[ofApp::onWordDisplay]All Word Finish");
 		setTriggerEvent(false);
 		_isWaitExplode = true;
 		_explodeTimer = config::getInstance()->_explodeWaitT;
@@ -320,16 +424,17 @@ void ofApp::onWordDisplay(int & id)
 //--------------------------------------------------------------
 void ofApp::onWordOut(int & id)
 {
-	ofLog(OF_LOG_NOTICE, "[ofApp::onWordOut]ID :" + ofToString(id));
+	//ofLog(OF_LOG_NOTICE, "[ofApp::onWordOut]ID :" + ofToString(id));
 	if (checkWordOut())
 	{
-		ofLog(OF_LOG_NOTICE, "[ofApp::onWordOut]All Word Out");
+		//ofLog(OF_LOG_NOTICE, "[ofApp::onWordOut]All Word Out");
 
 		_displayId = (_displayId + 1) % _textSetNum;
 		for (auto& iter : _wordList)
 		{
 			iter.setText(_displayId);
 		}
+		_maxChangeSong.change(_displayId + 1);
 		wordEnter();
 	}
 }
@@ -361,6 +466,8 @@ void ofApp::initMaxSender()
 	{
 		_maxSenderList[i].init(ip, port + i);
 	}
+
+	_maxChangeSong.init(ip, 7440);
 }
 #pragma endregion
 
@@ -401,21 +508,20 @@ void ofApp::onTriggerOn(string & id)
 	int index = val % cTriggerEachGroup;
 
 	auto newState = triggerWord(group, index);
-	if (newState != eTextCode)
+
+	if (newState == eTextLightOn || newState == eTextCode2LightOn)
 	{
-		if (newState == eTextLightOn)
-		{
-			_maxSenderList[val].trigger(0);
-		}
-		else if (newState == eTextDisplayPart)
-		{
-			_maxSenderList[val].trigger(1);
-		}
-		else if (newState == eTextDisplayPart)
-		{
-			_maxSenderList[val].trigger(2);
-		}
+		_maxSenderList[val].trigger(0);
 	}
+	else if (newState == eTextDisplayPart || newState == eTextLightOn2DisplayPart)
+	{
+		_maxSenderList[val].trigger(1);
+	}
+	else if (newState == eTextDisplayAll || newState == eTextDisplayPart2All)
+	{
+		_maxSenderList[val].trigger(2);
+	}
+
 }
 
 //--------------------------------------------------------------
@@ -453,7 +559,7 @@ void ofApp::setConfigListener(bool isListen)
 	{
 		config::getInstance()->_updateTrigger.removeListener(this, &ofApp::onTriggerAreaUpdate);
 	}
-	
+
 }
 //--------------------------------------------------------------
 void ofApp::onTriggerAreaUpdate()

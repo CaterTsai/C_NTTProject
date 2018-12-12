@@ -10,14 +10,16 @@ ofEvent<string> urgMgr::triggerArea::_onTriggerOff = ofEvent<string>();
 urgMgr::triggerArea::triggerArea()
 	:_id("")
 	, _isTrigger(false)
-	, _triggerTmp(false)
+	, _isTriggerTmp(false)
+	, _triggerCounter(0)
 {}
 
 //-----------------------------
 urgMgr::triggerArea::triggerArea(ofRectangle area, string id)
 	: _id(id)
 	, _isTrigger(false)
-	, _triggerTmp(false)
+	, _isTriggerTmp(false)
+	, _triggerCounter(0)
 {
 	_rect = area;
 }
@@ -37,7 +39,7 @@ void urgMgr::triggerArea::draw(float ratio)
 //-----------------------------
 void urgMgr::triggerArea::check(ofVec2f pos)
 {
-	if (_isTrigger)
+	if (_isTriggerTmp)
 	{
 		return;
 	}
@@ -47,43 +49,61 @@ void urgMgr::triggerArea::check(ofVec2f pos)
 		_checkCounter++;
 	}
 
-	if (_checkCounter > config::getInstance()->_exUsgThreshold);
+	if (_checkCounter > config::getInstance()->_exUsgThreshold)
 	{
-		_isTrigger = true;
+		_isTriggerTmp = true;
 	}
 }
 
 //-----------------------------
 void urgMgr::triggerArea::finish()
 {
-	if (_isTrigger)
+	if (_isTriggerTmp && !_isTrigger)
 	{
-		if (_isTrigger != _triggerTmp)
+		if (_triggerCounter >= config::getInstance()->_exTriggerLimit)
 		{
 			ofNotifyEvent(urgMgr::triggerArea::_onTriggerOn, _id);
+			_isTrigger = true;
+		}
+		else
+		{
+			_triggerCounter++;
+		}
+	}
+	else if(!_isTriggerTmp && _isTrigger)
+	{
+		if (_triggerCounter >= config::getInstance()->_exTriggerLimit)
+		{
+			ofNotifyEvent(urgMgr::triggerArea::_onTriggerOff, _id);
+			_isTrigger = false;
+		}
+		else
+		{
+			_triggerCounter++;
 		}
 	}
 	else
 	{
-		if (_isTrigger != _triggerTmp)
+		if (_isTriggerTmp == _isTrigger)
 		{
-			ofNotifyEvent(urgMgr::triggerArea::_onTriggerOff, _id);
+			_triggerCounter = 0;
 		}
 	}
-	_triggerTmp = _isTrigger;
+
 }
 
 //-----------------------------
 void urgMgr::triggerArea::testCheck(ofRectangle testRect)
 {
-	if (_isTrigger)
+	if (_isTriggerTmp)
 	{
 		return;
 	}
 
+
 	if (testRect.intersects(_rect))
 	{
-		_isTrigger = true;
+		_isTriggerTmp = true;
 	}
 }
 
@@ -96,8 +116,7 @@ void urgMgr::triggerArea::updateArea(ofRectangle newRect)
 //-----------------------------
 void urgMgr::triggerArea::clear()
 {
-	
-	_isTrigger = false;
+	_isTriggerTmp = false;
 	_checkCounter = false;
 }
 #pragma endregion
@@ -118,7 +137,7 @@ void urgMgr::setup(string ip, int port, float mm2pix)
 {
 	if (urgWrapper::getInstance()->conn(ip, port))
 	{
-		urgWrapper::getInstance()->enableSmooth(3);
+		//urgWrapper::getInstance()->enableSmooth(3);
 		_isSetup = true;
 	}
 	else
@@ -194,7 +213,7 @@ void urgMgr::addTriggerArea(string id, int x, int y, int width, int height)
 void urgMgr::addListTriggerArea(int num, int dist, int width, int hegiht)
 {
 	float x = width * num * -0.5 + (0.5f * width);
-	for (int i = 0; i < num; i++)
+	for (int i = num-1; i >= 0; i--)
 	{
 		addTriggerArea(ofToString(i), x, dist, width, hegiht);
 		x += width;

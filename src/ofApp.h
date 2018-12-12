@@ -5,6 +5,7 @@
 #include "wordUnit.h"
 #include "urgMgr.h"
 #include "maxSender.h"
+#include "maxChangeSong.h"
 #include "background.h"
 #include "projectionCanvas.h"
 
@@ -17,7 +18,7 @@ public:
 	void draw();
 
 	void keyPressed(int key);
-
+	void mouseDragged(int x, int y, int button);
 private:
 	float _timer;
 	bool _debugMode;
@@ -53,6 +54,8 @@ public:
 	void initMaxSender();
 private:
 	vector<maxSender> _maxSenderList;
+	maxChangeSong	_maxChangeSong;
+
 #pragma endregion
 	
 #pragma region urgMgr
@@ -69,12 +72,9 @@ private:
 #pragma endregion
 
 #pragma region projection Canvas
-public:
-
 private:
-	projectionCanvas _canvas;
+	projectionCanvas _canvas[2];
 #pragma endregion
-
 
 #pragma region Config
 public:

@@ -24,9 +24,12 @@ public:
 	int _exBGSphereNum;
 	int _exMaxPort;
 	int _exUsgThreshold;
+	int _exMeshColNum, _exMeshRowNum;
+	int _exTriggerLimit;
 	float _exUrgMM2Pix;
 	string _exUrgIP;
 	string _exMaxIP;
+	int _exFontSize;
 
 
 	//Gui
